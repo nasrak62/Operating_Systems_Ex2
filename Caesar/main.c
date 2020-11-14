@@ -24,11 +24,14 @@ int main(int argc, char* argv[]) {
 		errno_t OutputFileOpeningError = NULL;
 
 		InputFileOpeningError = (fopen_s(&InPutFile, InputFilePath, "r"));
-		OutputFileOpeningError = (fopen_s(&OutPutFile, Return_Output_Path_From_Input_Path(InputFilePath), "r"));
+		OutputFileOpeningError = (fopen_s(&OutPutFile, Return_Output_Path_From_Input_Path(InputFilePath), "w"));
 		if (OutputFileOpeningError == 0 && InputFileOpeningError == 0) {
 			printf("Input and output File Opened\n");
-			
+			int *ArrayRowIndexs=Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Row_Indexs(InputFileOpeningError, NumberOfActiveThreadsForTheProgram);
+			for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
+				Create_Thread_And_Job(i,ArrayRowIndexs[i], ArrayRowIndexs[i], InputFileOpeningError, OutputFileOpeningError);
 
+			}
 
 
 			fclose(OutPutFile);
