@@ -1,0 +1,6 @@
+﻿  main.c
+D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(33,54): warning C4133: 'function': incompatible types - from 'int *' to 'const char *'
+D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(39,55): warning C4047: '==': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(23,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(24,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
+  Caesar.vcxproj -> D:\GitStuff\Operating_Systems_Ex2\Caesar\Debug\Caesar.exe

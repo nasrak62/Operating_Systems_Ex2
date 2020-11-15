@@ -28,8 +28,13 @@ int main(int argc, char* argv[]) {
 		DWORD p_thread_ids = (DWORD)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(DWORD)));
 
 		Create_Thread_And_Job(0, 0, 0, InPutFile, OutPutFile, &p_thread_handles, &p_thread_ids);
+		printf("output path is %s\n", Return_Output_Path_From_Input_Path(InputFilePath, WhatActionShouldWeTake));
 		int* ArrayRowIndexs = Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Row_Indexs(InputFilePath, NumberOfActiveThreadsForTheProgram);
-		
+		printf("ArrayRowIndexs %d\n", strlen(ArrayRowIndexs));
+		for (int i = 0; i < 2*NumberOfActiveThreadsForTheProgram; i++) {
+			//Create_Thread_And_Job(i, ArrayRowIndexs[i], ArrayRowIndexs[i+1], InputFileOpeningError, OutputFileOpeningError, &p_thread_handles, &p_thread_ids);
+			printf("ArrayRowIndexs %d\n", ArrayRowIndexs[i]);
+		}
 		
 		if (p_thread_handles == NULL || p_thread_ids == NULL) {
 			printf("Malloc Failed\n");
@@ -40,7 +45,7 @@ int main(int argc, char* argv[]) {
 			OutputFileOpeningError = (fopen_s(&OutPutFile, Return_Output_Path_From_Input_Path(InputFilePath,WhatActionShouldWeTake), "w"));
 			if (OutputFileOpeningError == 0 && InputFileOpeningError == 0) {
 				printf("Input and output File Opened\n");
-				for (int i = 0; i < 2*NumberOfActiveThreadsForTheProgram; i+=2) {
+				for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
 					//Create_Thread_And_Job(i, ArrayRowIndexs[i], ArrayRowIndexs[i+1], InputFileOpeningError, OutputFileOpeningError, &p_thread_handles, &p_thread_ids);
 
 				}
