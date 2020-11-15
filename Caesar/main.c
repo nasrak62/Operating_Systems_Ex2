@@ -26,14 +26,10 @@ int main(int argc, char* argv[]) {
 		//DWORD p_thread_ids = (DWORD)malloc(NumberOfActiveThreadsForTheProgram * sizeof(DWORD));
 		HANDLE p_thread_handles = (HANDLE)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(HANDLE)));
 		DWORD p_thread_ids = (DWORD)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(DWORD)));
-		PMYDATA pDataArray = (PMYDATA)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(PMYDATA)));
+		PMYDATA ThreadpointerDataArray = (PMYDATA)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(MYDATA)));
+		
 
-
-
-		//Create_Thread_And_Job(0, 0, 0, InPutFile, OutPutFile, &p_thread_handles, &p_thread_ids);
 		int* ArrayRowIndexs = Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Row_Indexs(InputFilePath, NumberOfActiveThreadsForTheProgram);
-		
-		
 		if (p_thread_handles == NULL || p_thread_ids == NULL) {
 			printf("Malloc Failed\n");
 
@@ -45,7 +41,14 @@ int main(int argc, char* argv[]) {
 				printf("Input and output File Opened\n");
 				int ThreadCurrentNumber = 0;
 				for (int i = 0; i < 2*NumberOfActiveThreadsForTheProgram; i+=2) {
-					Create_Thread_And_Job(ThreadCurrentNumber, ArrayRowIndexs[i], ArrayRowIndexs[i+1], InPutFile, OutPutFile, &p_thread_handles, &p_thread_ids);
+					ThreadpointerDataArray[ThreadCurrentNumber].ThreadNumber = ThreadCurrentNumber;
+					ThreadpointerDataArray[ThreadCurrentNumber].StartingRow = ArrayRowIndexs[i];
+					ThreadpointerDataArray[ThreadCurrentNumber].EndingRow = ArrayRowIndexs[i + 1];
+					ThreadpointerDataArray[ThreadCurrentNumber].InPutFile = InPutFile;
+					ThreadpointerDataArray[ThreadCurrentNumber].OutPutFile = OutPutFile;
+					ThreadpointerDataArray[ThreadCurrentNumber].Key = Key;
+					ThreadpointerDataArray[ThreadCurrentNumber].FileLastLine = ArrayRowIndexs[2 * NumberOfActiveThreadsForTheProgram - 1];
+					Create_Thread_And_Job(ThreadpointerDataArray[ThreadCurrentNumber], &p_thread_handles, &p_thread_ids);
 					ThreadCurrentNumber++;
 				}
 

@@ -1,6 +1,6 @@
 #include "ThreadsAndThreadsFunctions.h"
 static HANDLE CreateThreadSimple(LPTHREAD_START_ROUTINE p_start_routine,
-	LPDWORD p_thread_id)
+	LPDWORD p_thread_id, PMYDATA pDataArray)
 {
 	HANDLE thread_handle;
 
@@ -22,7 +22,7 @@ static HANDLE CreateThreadSimple(LPTHREAD_START_ROUTINE p_start_routine,
 		NULL,            /*  default security attributes */
 		0,               /*  use default stack size */
 		p_start_routine, /*  thread function */
-		NULL,            /*  argument to thread function */
+		pDataArray,            /*  argument to thread function */
 		0,               /*  use default creation flags */
 		p_thread_id);    /*  returns the thread identifier */
 
@@ -42,26 +42,28 @@ DWORD WINAPI ThreadTempFunction(LPVOID lpParam){
 }
 
 
-DWORD WINAPI decipher(LPVOID lpParam,int key, int last_line, int start_line, int finish_line, FILE* input_ptr, FILE* output_ptr)
+DWORD WINAPI decipher(LPVOID lpParam)
 {
+	PMYDATA ThreadpointerData;
+	ThreadpointerData = (PMYDATA)lpParam;
 	char line[100], ch;
 	int i, j;
 	
-	for (j = 1; j < last_line + 1; j++)
+	for (j = 1; j < ThreadpointerData->FileLastLine + 1; j++)
 	{
-		fgets(line, 100, input_ptr);
-		if (j >= start_line && j <= finish_line)
+		fgets(line, 100, ThreadpointerData->InPutFile);
+		if (j >= ThreadpointerData->StartingRow && j <= ThreadpointerData->EndingRow)
 		{
 			for (i = 0; line[i] != '\0'; i++) {
 				ch = line[i];
 				if (isdigit(ch) != 0) {
-					ch = '0' + (ch - '0' - key) % 10;
+					ch = '0' + (ch - '0' - ThreadpointerData->Key) % 10;
 					line[i] = ch;
 				}
 				else {
 
 					if (ch >= 'a' && ch <= 'z') {
-						ch = ch - key;
+						ch = ch - ThreadpointerData->Key;
 
 						if (ch < 'a') {
 							ch = ch + 'z' - 'a' + 1;
@@ -70,7 +72,7 @@ DWORD WINAPI decipher(LPVOID lpParam,int key, int last_line, int start_line, int
 						line[i] = ch;
 					}
 					else if (ch >= 'A' && ch <= 'Z') {
-						ch = ch - key;
+						ch = ch - ThreadpointerData->Key;
 
 						if (ch < 'A') {
 							ch = ch + 'Z' - 'A' + 1;
@@ -80,17 +82,29 @@ DWORD WINAPI decipher(LPVOID lpParam,int key, int last_line, int start_line, int
 					}
 				}
 			}
-			fprintf(output_ptr, "%s", line);
+			fprintf(ThreadpointerData->OutPutFile, "%s", line);
 		}
 	}
 }
 
 
-void Create_Thread_And_Job(const int ThreadNumber, const int StartingRow, const int EndingRow, FILE* InPutFile, FILE* OutPutFile, HANDLE  *p_thread_handles, DWORD *p_thread_ids) {
+void Create_Thread_And_Job(MYDATA THreadDataArguments, HANDLE  *p_thread_handles, DWORD *p_thread_ids) {
 	DWORD wait_code;
 	BOOL ret_val;
 	size_t i;
-	p_thread_handles[ThreadNumber] = CreateThreadSimple(ThreadTempFunction , &p_thread_ids[ThreadNumber]);
+	int ThreadNumber = THreadDataArguments.ThreadNumber;
+	//p_thread_handles[ThreadNumber] = CreateThreadSimple(ThreadTempFunction , &p_thread_ids[ThreadNumber], pDataArray);
+	p_thread_handles[ThreadNumber] = CreateThread(
+		NULL,            /*  default security attributes */
+		0,               /*  use default stack size */
+		decipher, /*  thread function */
+		(LPVOID) &THreadDataArguments,            /*  argument to thread function */
+		0,               /*  use default creation flags */
+		&p_thread_ids[ThreadNumber]);    /*  returns the thread identifier */
+
+
+
+
 	// Wait for IO thread to receive exit command and terminate
 	wait_code = WaitForSingleObject(p_thread_handles[0], INFINITE);
 	if (WAIT_OBJECT_0 != wait_code)
