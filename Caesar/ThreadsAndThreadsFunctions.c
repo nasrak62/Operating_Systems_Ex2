@@ -42,11 +42,55 @@ DWORD WINAPI ThreadTempFunction(LPVOID lpParam){
 }
 
 
+DWORD WINAPI decipher(LPVOID lpParam,int key, int last_line, int start_line, int finish_line, FILE* input_ptr, FILE* output_ptr)
+{
+	char line[100], ch;
+	int i, j;
+	
+	for (j = 1; j < last_line + 1; j++)
+	{
+		fgets(line, 100, input_ptr);
+		if (j >= start_line && j <= finish_line)
+		{
+			for (i = 0; line[i] != '\0'; i++) {
+				ch = line[i];
+				if (isdigit(ch) != 0) {
+					ch = '0' + (ch - '0' - key) % 10;
+					line[i] = ch;
+				}
+				else {
+
+					if (ch >= 'a' && ch <= 'z') {
+						ch = ch - key;
+
+						if (ch < 'a') {
+							ch = ch + 'z' - 'a' + 1;
+						}
+
+						line[i] = ch;
+					}
+					else if (ch >= 'A' && ch <= 'Z') {
+						ch = ch - key;
+
+						if (ch < 'A') {
+							ch = ch + 'Z' - 'A' + 1;
+						}
+
+						line[i] = ch;
+					}
+				}
+			}
+			fprintf(output_ptr, "%s", line);
+		}
+	}
+}
+
+
 void Create_Thread_And_Job(const int ThreadNumber, const int StartingRow, const int EndingRow, FILE* InPutFile, FILE* OutPutFile, HANDLE  *p_thread_handles, DWORD *p_thread_ids) {
 	DWORD wait_code;
 	BOOL ret_val;
 	size_t i;
-	p_thread_handles[0] = CreateThreadSimple(ThreadTempFunction , &p_thread_ids[0]);
+	p_thread_handles[ThreadNumber] = CreateThreadSimple(ThreadTempFunction , &p_thread_ids[ThreadNumber]);
 	// Wait for IO thread to receive exit command and terminate
 	wait_code = WaitForSingleObject(p_thread_handles[0], INFINITE);
 	if (WAIT_OBJECT_0 != wait_code)
