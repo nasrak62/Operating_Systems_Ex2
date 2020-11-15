@@ -1,0 +1,81 @@
+void decipher(int key, int last_line, int start_line, int finish_line)
+{
+	char line[100], ch;
+	int i, j;
+	FILE* input_ptr = NULL;
+	FILE* output_ptr = NULL;
+	errno_t input_error, output_error;
+	input_error = fopen_s(&input_ptr, "input.txt", "r");
+	output_error = fopen_s(&output_ptr, "output.txt", "w");
+	
+	if (input_error == 0 && output_error == 0)
+	{
+		for (j = 1; j < last_line + 1; j++)
+		{
+			fgets(line, 100, input_ptr);
+			if (j >= start_line && j <= finish_line)
+			{
+				for (i = 0; line[i] != '\0'; i++) {
+					ch = line[i];
+					if (isdigit(ch) != 0) {
+						ch = '0' + (ch - '0' - key) % 10;
+						line[i] = ch;
+					}
+					else {
+
+						if (ch >= 'a' && ch <= 'z') {
+							ch = ch - key;
+
+							if (ch < 'a') {
+								ch = ch + 'z' - 'a' + 1;
+							}
+
+							line[i] = ch;
+						}
+						else if (ch >= 'A' && ch <= 'Z') {
+							ch = ch - key;
+
+							if (ch < 'A') {
+								ch = ch + 'Z' - 'A' + 1;
+							}
+
+							line[i] = ch;
+						}
+					}
+				}
+				fprintf(output_ptr, "%s", line);
+			}
+		}
+		fclose(input_ptr);
+		fclose(output_ptr);
+	}
+	else
+	{
+		printf("Couldn't open The inPut/output file");
+	}
+}
+
+
+int lines_count()
+{
+	FILE* input_ptr = NULL;
+	errno_t input_error;
+	input_error = fopen_s(&input_ptr, "input.txt", "r");
+	char ch;
+	int lines_count = 0;
+	if (input_error == 0)
+	{
+		while ((ch = fgetc(input_ptr)) != EOF)
+		{
+			if (ch == '\n' || ch == '\0')
+				lines_count++;
+		}
+		lines_count++;
+		fclose(input_ptr);
+		return lines_count;
+	}
+	else
+	{
+		printf("Couldn't open The inPut file");
+	}
+}
