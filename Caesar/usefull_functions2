@@ -1,0 +1,172 @@
+void decipher(int key, int last_line, int start_line, int finish_line)
+{
+	int max_size = max_line_size();
+	char ch;
+	int i, j;
+	FILE* input_ptr = NULL;
+	FILE* output_ptr = NULL;
+	errno_t input_error, output_error;
+	input_error = fopen_s(&input_ptr, "input.txt", "r");
+	output_error = fopen_s(&output_ptr, "output.txt", "w");
+	
+	if (input_error == 0 && output_error == 0)
+	{
+		char* ptr_line = (char*)malloc((max_size * sizeof(char)));
+		if (NULL != ptr_line)
+		{
+			for (j = 1; j < last_line + 1; j++)
+			{
+				fgets(ptr_line, 100, input_ptr);
+				if (j >= start_line && j <= finish_line)
+				{
+					for (i = 0; ptr_line[i] != '\0'; i++) {
+						ch = ptr_line[i];
+						if (isdigit(ch) != 0) {
+							ch = '0' + (ch - '0' - key) % 10;
+							ptr_line[i] = ch;
+						}
+						else {
+
+							if (ch >= 'a' && ch <= 'z') {
+								ch = ch - key;
+
+								if (ch < 'a') {
+									ch = ch + 'z' - 'a' + 1;
+								}
+
+								ptr_line[i] = ch;
+							}
+							else if (ch >= 'A' && ch <= 'Z') {
+								ch = ch - key;
+
+								if (ch < 'A') {
+									ch = ch + 'Z' - 'A' + 1;
+								}
+
+								ptr_line[i] = ch;
+							}
+
+						}
+					}
+					fprintf(output_ptr, "%s", ptr_line);
+				}
+			}
+		}
+		else
+			printf("Memory Allocation failure!");
+		fclose(input_ptr);
+		fclose(output_ptr);
+		
+	}
+	else
+	{
+		printf("Couldn't open The inPut/output file");
+	}
+	//free(ptr_line);
+}
+void encrypter(int key, int last_line, int start_line, int finish_line)
+{
+	int max_size = max_line_size();
+	char ch;
+	int i, j;
+	FILE* input_ptr = NULL;
+	FILE* output_ptr = NULL;
+	errno_t input_error, output_error;
+	input_error = fopen_s(&input_ptr, "input.txt", "r");
+	output_error = fopen_s(&output_ptr, "output.txt", "w");
+
+	if (input_error == 0 && output_error == 0)
+	{
+		char* ptr_line = (char*)malloc((max_size * sizeof(char)));
+		if (NULL != ptr_line)
+		{
+			for (j = 1; j < last_line + 1; j++)
+			{
+				fgets(ptr_line, 100, input_ptr);
+				if (j >= start_line && j <= finish_line)
+				{
+					for (i = 0; ptr_line[i] != '\0'; i++) {
+						ch = ptr_line[i];
+						if (isdigit(ch) != 0) {
+							ch = '0' + (ch - '0' + key) % 10;
+							ptr_line[i] = ch;
+						}
+						else {
+
+							if (ch >= 'a' && ch <= 'z') {
+								ch = ch + key;
+
+								if (ch > 'z') {
+									ch = ch - 'z' + 'a' -1 ;
+								}
+
+								ptr_line[i] = ch;
+							}
+							else if (ch >= 'A' && ch <= 'Z') {
+								ch = ch + key;
+
+								if (ch > 'Z') {
+									ch = ch - 'Z' + 'A' - 1;
+								}
+
+								ptr_line[i] = ch;
+							}
+
+						}
+					}
+					fprintf(output_ptr, "%s", ptr_line);
+				}
+			}
+		}
+		else
+			printf("Memory Allocation failure!");
+		fclose(input_ptr);
+		fclose(output_ptr);
+
+	}
+	else
+	{
+		printf("Couldn't open The inPut/output file");
+	}
+	//free(ptr_line);
+}
+int lines_count()
+{
+	FILE* input_ptr = NULL;
+	errno_t input_error;
+	input_error = fopen_s(&input_ptr, "input.txt", "r");
+	char ch;
+	int lines_count = 0;
+	if (input_error == 0)
+	{
+		while ((ch = fgetc(input_ptr)) != EOF)
+		{
+			if (ch == '\n' || ch == '\0')
+				lines_count++;
+		}
+		lines_count++;
+		fclose(input_ptr);
+		return lines_count;
+	}
+	else
+	{
+		printf("Couldn't open The inPut file");
+	}
+}
+int max_line_size()
+{
+	FILE* input_ptr = NULL;
+	errno_t input_error;
+	input_error = fopen_s(&input_ptr, "input.txt", "r");
+	char ch;
+	int max = 0,  i = 0;
+	do
+		if ((ch = fgetc(input_ptr)) != EOF && ch != '\n') i++;
+		else {
+			if (i > max) max = i;
+			i = 0;
+		}
+	while (ch != EOF);
+	fclose(input_ptr);
+	return max;
+}
