@@ -49,7 +49,7 @@ DWORD WINAPI decipher(LPVOID lpParam)
 	char line[100], ch;
 	int i, j;
 	
-	for (j = 1; j < ThreadpointerData->FileLastLine + 1; j++)
+	for (j = 0; j < ThreadpointerData->FileLastLine + 1; j++)
 	{
 		fgets(line, 100, ThreadpointerData->InPutFile);
 		if (j >= ThreadpointerData->StartingRow && j <= ThreadpointerData->EndingRow)
@@ -106,7 +106,7 @@ void Create_Thread_And_Job(MYDATA THreadDataArguments, HANDLE  *p_thread_handles
 
 
 	// Wait for IO thread to receive exit command and terminate
-	wait_code = WaitForSingleObject(p_thread_handles[0], INFINITE);
+	wait_code = WaitForSingleObject(p_thread_handles[ThreadNumber], INFINITE);
 	if (WAIT_OBJECT_0 != wait_code)
 	{
 		printf("Error when waiting");
@@ -118,7 +118,7 @@ void Create_Thread_And_Job(MYDATA THreadDataArguments, HANDLE  *p_thread_handles
 	// because it might be in the middle of an operation that should not
 	// be interrupted (like writing a file).
 	// There are gentler ways of terminating a thread.
-	ret_val = TerminateThread(p_thread_handles[0], BRUTAL_TERMINATION_CODE);
+	ret_val = TerminateThread(p_thread_handles[ThreadNumber], BRUTAL_TERMINATION_CODE);
 	if (false == ret_val)
 	{
 		printf("Error when terminating\n");
@@ -137,7 +137,7 @@ void Create_Thread_And_Job(MYDATA THreadDataArguments, HANDLE  *p_thread_handles
 	}
 	*/
 
-	ret_val = CloseHandle(p_thread_handles[0]);
+	ret_val = CloseHandle(p_thread_handles[ThreadNumber]);
 	if (false == ret_val)
 	{
 		printf("Error when closing\n");

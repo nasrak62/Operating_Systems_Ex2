@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 					ThreadCurrentNumber++;
 				}
 
-
+				//relese memory!
 				fclose(OutPutFile);
 				fclose(InPutFile);
 			}
