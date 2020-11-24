@@ -1,114 +1,183 @@
 #include "ThreadsAndThreadsFunctions.h"
-static HANDLE CreateThreadSimple(LPTHREAD_START_ROUTINE p_start_routine,
-	LPDWORD p_thread_id, PMYDATA pDataArray)
+BOOL FileExists(LPCTSTR szPath)
 {
-	HANDLE thread_handle;
-
-	if (NULL == p_start_routine)
-	{
-		printf("Error when creating a thread");
-		printf("Received null pointer");
-		exit(ERROR_CODE);
-	}
-
-	if (NULL == p_thread_id)
-	{
-		printf("Error when creating a thread");
-		printf("Received null pointer");
-		exit(ERROR_CODE);
-	}
-
-	thread_handle = CreateThread(
-		NULL,            /*  default security attributes */
-		0,               /*  use default stack size */
-		p_start_routine, /*  thread function */
-		pDataArray,            /*  argument to thread function */
-		0,               /*  use default creation flags */
-		p_thread_id);    /*  returns the thread identifier */
-
-	if (NULL == thread_handle)
-	{
-		printf("Couldn't create thread\n");
-		exit(ERROR_CODE);
-	}
-
-	return thread_handle;
+	DWORD dwAttrib = GetFileAttributes(szPath);
+	return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+		!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-DWORD WINAPI ThreadTempFunction(LPVOID lpParam){
-	printf("Thread says hi\n");
-	Sleep(1000);
-	printf("Thread says hi\n");
+void  Decipher(PMYDATA ThreadpointerData, HANDLE HandleFileForReading,HANDLE HandleFileForWriting) {
+	char* line = (char*)malloc((ThreadpointerData->EndingByte - ThreadpointerData->StartingByte) * sizeof(char));
+	int LineSize = ((ThreadpointerData->EndingByte - ThreadpointerData->StartingByte) * sizeof(char));
+	int i, j;
+	char  ch;
+	OVERLAPPED oRead = { 0 };
+	oRead.Offset = ThreadpointerData->StartingByte;
+	DWORD dwBytesRead, dwBytesWritten, dwPos;
+
+	ReadFile(HandleFileForReading, line, LineSize, &dwBytesRead, &oRead);
+	if (dwBytesRead > 0 && dwBytesRead <= LineSize)
+	{
+		line[dwBytesRead] = '\0'; // NULL character
+	}
+
+	for (i = 0; i < dwBytesRead; i++) {
+		if (line[i] == '\0' || i > LineSize) {
+			break;
+		}
+		ch = line[i];
+		if (isdigit(ch) != 0) {
+			ch = '0' + (ch - '0' - ThreadpointerData->Key) % 10;
+			line[i] = ch;
+		}
+		else {
+			if (ch >= 'a' && ch <= 'z') {
+				ch = ch - ThreadpointerData->Key;
+				if (ch < 'a') {
+					ch = ch + 'z' - 'a' + 1;
+				}
+
+				line[i] = ch;
+			}
+			else if (ch >= 'A' && ch <= 'Z') {
+				ch = ch - ThreadpointerData->Key;
+
+				if (ch < 'A') {
+					ch = ch + 'Z' - 'A' + 1;
+				}
+				line[i] = ch;
+			}
+		}
+
+	}
+	WriteFile(HandleFileForWriting, line, dwBytesRead, &dwBytesWritten, &oRead);
+	//free(line);
 }
 
+void  Encrypt(PMYDATA ThreadpointerData, HANDLE HandleFileForReading, HANDLE HandleFileForWriting) {
+	char* line = (char*)malloc((ThreadpointerData->EndingByte - ThreadpointerData->StartingByte) * sizeof(char));
+	int LineSize = ((ThreadpointerData->EndingByte - ThreadpointerData->StartingByte) * sizeof(char));
+	int i, j;
+	char  ch;
+	OVERLAPPED oRead = { 0 };
+	oRead.Offset = ThreadpointerData->StartingByte;
+	DWORD dwBytesRead, dwBytesWritten, dwPos;
 
-DWORD WINAPI decipher(LPVOID lpParam)
+	ReadFile(HandleFileForReading, line, LineSize, &dwBytesRead, &oRead);
+	if (dwBytesRead > 0 && dwBytesRead <= LineSize)
+	{
+		line[dwBytesRead] = '\0'; // NULL character
+	}
+
+	for (i = 0; i < dwBytesRead; i++) {
+		if (line[i] == '\0' || i > LineSize) {
+			break;
+		}
+		ch = line[i];
+		if (isdigit(ch) != 0) {
+			ch = '0' + (ch - '0' + ThreadpointerData->Key) % 10;
+			line[i] = ch;
+		}
+		else {
+			if (ch >= 'a' && ch <= 'z') {
+				ch = ch + ThreadpointerData->Key;
+				if (ch > 'z') {
+					ch = ch - 'z' + 'a' - 1;
+				}
+
+				line[i] = ch;
+			}
+			else if (ch >= 'A' && ch <= 'Z') {
+				ch = ch + ThreadpointerData->Key;
+
+				if (ch > 'Z') {
+					ch = ch - 'Z' + 'A' - 1;
+				}
+				line[i] = ch;
+			}
+		}
+
+	}
+	WriteFile(HandleFileForWriting, line, dwBytesRead, &dwBytesWritten, &oRead);
+	//free(line);
+}
+
+DWORD WINAPI Decipher_Or_Encrypt(LPVOID lpParam)
 {
 	PMYDATA ThreadpointerData;
 	ThreadpointerData = (PMYDATA)lpParam;
-	char line[100], ch;
-	int i, j;
-	
-	for (j = 0; j < ThreadpointerData->FileLastLine + 1; j++)
-	{
-		fgets(line, 100, ThreadpointerData->InPutFile);
-		if (j >= ThreadpointerData->StartingRow && j <= ThreadpointerData->EndingRow)
-		{
-			for (i = 0; line[i] != '\0'; i++) {
-				ch = line[i];
-				if (isdigit(ch) != 0) {
-					ch = '0' + (ch - '0' - ThreadpointerData->Key) % 10;
-					line[i] = ch;
+	if (ThreadpointerData->EndingByte>0) {
+		DWORD wait_res_mutex;
+		DWORD wait_res_semaphore;
+		BOOL release_res;
+		wait_res_semaphore = WaitForSingleObject(ThreadpointerData->Semaphore, TIMEOUT_IN_MILLISECONDS);
+		wait_res_mutex = WaitForSingleObject(ThreadpointerData->Mutex, TIMEOUT_IN_MILLISECONDS);
+		if (wait_res_mutex == WAIT_OBJECT_0 && wait_res_semaphore == WAIT_OBJECT_0) {
+
+			HANDLE HandleFileForReading = CreateFile(ThreadpointerData->InputFilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			HANDLE HandleFileForWriting;
+
+			if (FileExists(ThreadpointerData->OutputFilePath))
+			{
+				HandleFileForWriting = CreateFile(ThreadpointerData->OutputFilePath, GENERIC_WRITE,
+					FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			}
+			else {
+				HandleFileForWriting = CreateFile(ThreadpointerData->OutputFilePath, GENERIC_WRITE,
+					FILE_SHARE_WRITE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+			}
+			if (HandleFileForReading == INVALID_HANDLE_VALUE)
+			{
+				printf("Error Reading\n");
+
+			}
+			if (HandleFileForWriting == INVALID_HANDLE_VALUE)
+			{
+				printf("Error Writing\n");
+
+			}
+			release_res = ReleaseMutex(ThreadpointerData->Mutex);
+			if (release_res == FALSE) {
+				printf("Cant Relese Mutex\n");
+			}
+			if (HandleFileForReading != INVALID_HANDLE_VALUE && HandleFileForWriting != INVALID_HANDLE_VALUE) {
+				if (strcmp(ThreadpointerData->WhatActionShouldWeTake, "-d") == 0) {
+					Decipher(ThreadpointerData, HandleFileForReading, HandleFileForWriting);
 				}
-				else {
-
-					if (ch >= 'a' && ch <= 'z') {
-						ch = ch - ThreadpointerData->Key;
-
-						if (ch < 'a') {
-							ch = ch + 'z' - 'a' + 1;
-						}
-
-						line[i] = ch;
-					}
-					else if (ch >= 'A' && ch <= 'Z') {
-						ch = ch - ThreadpointerData->Key;
-
-						if (ch < 'A') {
-							ch = ch + 'Z' - 'A' + 1;
-						}
-
-						line[i] = ch;
-					}
+				else if (strcmp(ThreadpointerData->WhatActionShouldWeTake, "-e") == 0) {
+					Encrypt(ThreadpointerData, HandleFileForReading, HandleFileForWriting);
 				}
 			}
-			fprintf(ThreadpointerData->OutPutFile, "%s", line);
+
+			CloseHandle(HandleFileForReading);
+			CloseHandle(HandleFileForWriting);
+
+
 		}
 	}
+	
 }
-
-
-void Create_Thread_And_Job(MYDATA THreadDataArguments, HANDLE  *p_thread_handles, DWORD *p_thread_ids) {
+void CheckThreadsStatus(PMYDATA THreadDataArguments,HANDLE** p_thread_handles, int NumberOfActiveThreadsForTheProgram) {
 	DWORD wait_code;
 	BOOL ret_val;
 	size_t i;
-	int ThreadNumber = THreadDataArguments.ThreadNumber;
-	//p_thread_handles[ThreadNumber] = CreateThreadSimple(ThreadTempFunction , &p_thread_ids[ThreadNumber], pDataArray);
-	p_thread_handles[ThreadNumber] = CreateThread(
-		NULL,            /*  default security attributes */
-		0,               /*  use default stack size */
-		decipher, /*  thread function */
-		(LPVOID) &THreadDataArguments,            /*  argument to thread function */
-		0,               /*  use default creation flags */
-		&p_thread_ids[ThreadNumber]);    /*  returns the thread identifier */
+	
+	
+	wait_code = WaitForMultipleObjects(NumberOfActiveThreadsForTheProgram,(*p_thread_handles),TRUE, TIMEOUT_IN_MILLISECONDS);
 
 
 
-
-	// Wait for IO thread to receive exit command and terminate
-	wait_code = WaitForSingleObject(p_thread_handles[ThreadNumber], INFINITE);
-	if (WAIT_OBJECT_0 != wait_code)
+	switch (wait_code)
 	{
+	case WAIT_OBJECT_0 + 0:
+		printf("Finished.\n");
+		break;
+	case WAIT_TIMEOUT:
+		printf("Wait timed out.\n");
+		break;
+
+		// Return value is invalid.
+	default:
 		printf("Error when waiting");
 		return ERROR_CODE;
 	}
@@ -118,33 +187,29 @@ void Create_Thread_And_Job(MYDATA THreadDataArguments, HANDLE  *p_thread_handles
 	// because it might be in the middle of an operation that should not
 	// be interrupted (like writing a file).
 	// There are gentler ways of terminating a thread.
-	ret_val = TerminateThread(p_thread_handles[ThreadNumber], BRUTAL_TERMINATION_CODE);
+	/*ret_val = TerminateThread((*p_thread_handles)[ThreadNumber], BRUTAL_TERMINATION_CODE);
 	if (false == ret_val)
 	{
 		printf("Error when terminating\n");
 		return ERROR_CODE;
-	}
+	}*/
 
 	// Close thread handles
-	/*for (i = 0; i < NUM_THREADS; i++)
+	for (i = 0; i < NumberOfActiveThreadsForTheProgram; i++)
 	{
-		ret_val = CloseHandle(p_thread_handles[0]);
+		ret_val = CloseHandle((*p_thread_handles)[i]);
 		if (false == ret_val)
 		{
 			printf("Error when closing\n");
 			return ERROR_CODE;
 		}
 	}
-	*/
+	
 
-	ret_val = CloseHandle(p_thread_handles[ThreadNumber]);
-	if (false == ret_val)
-	{
-		printf("Error when closing\n");
-		return ERROR_CODE;
-	}
-
+	
 }
+
+
 
 char* Return_Output_Path_From_Input_Path(char* InputFilePath, char* WhatActionShouldWeTake) {
 	char* CopyOfInputFilePath = (char*)malloc((strlen(InputFilePath) + 1) * sizeof(char));
@@ -203,7 +268,7 @@ char* Return_Output_Path_From_Input_Path(char* InputFilePath, char* WhatActionSh
 				strcat_s(OutputPath, SizeOfOutputfile, EndOfPath);
 			}
 			
-		
+			//free(EndOfPath);
 			return OutputPath;
 		}
 
@@ -214,6 +279,45 @@ char* Return_Output_Path_From_Input_Path(char* InputFilePath, char* WhatActionSh
 	
 	
 }
+int* SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines(int** ArrayWithLineStartingAndEndingIndexs, int NumberOfActiveThreadsForTheProgram, int TotalBytesInFile) {
+	int BytesUsed = 0;
+	int CurrentThreadNumber = 0;
+	int StartingLine = 0;
+	int FinishLine = 0;
+	for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
+		if (BytesUsed< TotalBytesInFile) {
+			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber] = BytesUsed;
+			BytesUsed++;
+			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber + 1] = BytesUsed;
+			//BytesUsed++;
+		}
+		else {
+			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber] = 0;
+			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber + 1] = 0;
+		}
+		
+		CurrentThreadNumber += 2;	
+	}
+}
+
+int* SplitTheWorkEvenlyForAllThreads(int** ArrayWithLineStartingAndEndingIndexs, int NumberOfActiveThreadsForTheProgram, int TotalBytesInFile) {
+	int BytesUsed = 0;
+	int CurrentThreadNumber = 0;
+	int StartingLine = 0;
+	int FinishLine = 0;
+	int BytesForEachThread = TotalBytesInFile / NumberOfActiveThreadsForTheProgram;
+	FinishLine = BytesForEachThread;
+
+	for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
+		(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber] = StartingLine;
+		(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber + 1] = FinishLine;
+		CurrentThreadNumber += 2;
+		StartingLine = FinishLine;
+		FinishLine = min(FinishLine + BytesForEachThread, TotalBytesInFile);
+	}
+
+}
+
 
 int* Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Row_Indexs(char* InputFilePath, int NumberOfActiveThreadsForTheProgram) {
 	FILE* InPutFile = NULL;
@@ -223,27 +327,20 @@ int* Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Ro
 	int StartingLine = 0;
 	int FinishLine = 0;
 	int CurrentThreadNumber = 0;
+	int TotalBytesInFile = 0;
 	InputFileOpeningError = (fopen_s(&InPutFile, InputFilePath, "r"));
 	if (InputFileOpeningError == 0) {
 		printf("Input File Opened\n");
-		while (Temp !=EOF)
-		{
-			Temp = fgetc(InPutFile);
-			if (Temp == '\n')
-			{
-				linesCounter++;
-			}
-		}
-		int linesForEachThread = linesCounter / NumberOfActiveThreadsForTheProgram;
-		FinishLine = linesForEachThread;
+		fseek(InPutFile, 0, SEEK_END);
+		int TotalBytesInFile = ftell(InPutFile);
 		int* ArrayWithLineStartingAndEndingIndexs = (int*)malloc(NumberOfActiveThreadsForTheProgram * 2 * sizeof(int));
-		for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
-			ArrayWithLineStartingAndEndingIndexs[CurrentThreadNumber]=StartingLine;
-			ArrayWithLineStartingAndEndingIndexs[CurrentThreadNumber +1] = FinishLine;
-			CurrentThreadNumber+=2;
-			StartingLine = FinishLine+1;
-			FinishLine = min(FinishLine + 1+ linesForEachThread, linesCounter);
+		if (NumberOfActiveThreadsForTheProgram>= TotalBytesInFile) {
+			SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines(&ArrayWithLineStartingAndEndingIndexs, NumberOfActiveThreadsForTheProgram, TotalBytesInFile);
 		}
+		else{
+			SplitTheWorkEvenlyForAllThreads(&ArrayWithLineStartingAndEndingIndexs, NumberOfActiveThreadsForTheProgram, TotalBytesInFile);
+		}
+		
 
 		fclose(InPutFile);
 		return ArrayWithLineStartingAndEndingIndexs;
