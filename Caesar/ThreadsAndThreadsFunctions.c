@@ -253,7 +253,10 @@ char* Return_Output_Path_From_Input_Path(char* InputFilePath, char* WhatActionSh
 			char* token = strtok_s(CopyOfInputFilePath, "\\", &nexttoken);
 			
 			if (*nexttoken == NULL ) {
-
+				if (FileExists(EndOfPath))
+				{
+					DeleteFileA(EndOfPath);
+				}
 				return(EndOfPath);
 			}
 			else {
@@ -267,8 +270,11 @@ char* Return_Output_Path_From_Input_Path(char* InputFilePath, char* WhatActionSh
 				}
 				strcat_s(OutputPath, SizeOfOutputfile, EndOfPath);
 			}
-			
 			//free(EndOfPath);
+			if (FileExists(OutputPath))
+			{
+				DeleteFileA(OutputPath);
+			}
 			return OutputPath;
 		}
 
@@ -279,17 +285,16 @@ char* Return_Output_Path_From_Input_Path(char* InputFilePath, char* WhatActionSh
 	
 	
 }
-int* SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines(int** ArrayWithLineStartingAndEndingIndexs, int NumberOfActiveThreadsForTheProgram, int TotalBytesInFile) {
-	int BytesUsed = 0;
+int* SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines(int** ArrayWithLineStartingAndEndingIndexs, int NumberOfActiveThreadsForTheProgram,  int* LineEndingBytes, int linesCounter) {
 	int CurrentThreadNumber = 0;
 	int StartingLine = 0;
 	int FinishLine = 0;
 	for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
-		if (BytesUsed< TotalBytesInFile) {
-			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber] = BytesUsed;
-			BytesUsed++;
-			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber + 1] = BytesUsed;
-			//BytesUsed++;
+		if (i< linesCounter) {
+			FinishLine = LineEndingBytes[i];
+			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber] = StartingLine;
+			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber + 1] = FinishLine;
+			StartingLine = LineEndingBytes[i];
 		}
 		else {
 			(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber] = 0;
@@ -300,20 +305,22 @@ int* SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines(int** ArrayWithLineS
 	}
 }
 
-int* SplitTheWorkEvenlyForAllThreads(int** ArrayWithLineStartingAndEndingIndexs, int NumberOfActiveThreadsForTheProgram, int TotalBytesInFile) {
-	int BytesUsed = 0;
+int* SplitTheWorkEvenlyForAllThreads(int** ArrayWithLineStartingAndEndingIndexs, int NumberOfActiveThreadsForTheProgram, int* LineEndingBytes, int linesCounter) {
 	int CurrentThreadNumber = 0;
 	int StartingLine = 0;
 	int FinishLine = 0;
-	int BytesForEachThread = TotalBytesInFile / NumberOfActiveThreadsForTheProgram;
-	FinishLine = BytesForEachThread;
+	int LinesForEachThread = linesCounter / NumberOfActiveThreadsForTheProgram;
+	int FinishLineIndex= LinesForEachThread - 1;
+	FinishLine = LineEndingBytes[FinishLineIndex];
 
 	for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
 		(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber] = StartingLine;
 		(*ArrayWithLineStartingAndEndingIndexs)[CurrentThreadNumber + 1] = FinishLine;
 		CurrentThreadNumber += 2;
 		StartingLine = FinishLine;
-		FinishLine = min(FinishLine + BytesForEachThread, TotalBytesInFile);
+		FinishLineIndex= min(FinishLineIndex + LinesForEachThread, linesCounter-1);
+		FinishLine = LineEndingBytes[FinishLineIndex];
+
 	}
 
 }
@@ -328,17 +335,36 @@ int* Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Ro
 	int FinishLine = 0;
 	int CurrentThreadNumber = 0;
 	int TotalBytesInFile = 0;
+	int* ArrayWithLineStartingAndEndingIndexs = (int*)malloc(NumberOfActiveThreadsForTheProgram * 2 * sizeof(int));
 	InputFileOpeningError = (fopen_s(&InPutFile, InputFilePath, "r"));
 	if (InputFileOpeningError == 0) {
 		printf("Input File Opened\n");
-		fseek(InPutFile, 0, SEEK_END);
+		for (Temp = getc(InPutFile); Temp != EOF; Temp = getc(InPutFile)) {
+			if (Temp == '\n') {
+				linesCounter++;
+			}		
+		}
+		linesCounter++;
 		int TotalBytesInFile = ftell(InPutFile);
-		int* ArrayWithLineStartingAndEndingIndexs = (int*)malloc(NumberOfActiveThreadsForTheProgram * 2 * sizeof(int));
-		if (NumberOfActiveThreadsForTheProgram>= TotalBytesInFile) {
-			SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines(&ArrayWithLineStartingAndEndingIndexs, NumberOfActiveThreadsForTheProgram, TotalBytesInFile);
+		if (fseek(InPutFile, 0L, SEEK_SET) != 0) {
+			printf("File Error While Rewinding\n");
+		}
+		int* LineEndingBytes = (int*)malloc(linesCounter * sizeof(int));
+		int indexCountr = 0;
+		for (Temp = getc(InPutFile); Temp != EOF; Temp = getc(InPutFile)) {
+			if (Temp == '\n' ) {
+				LineEndingBytes[indexCountr]= ftell(InPutFile);
+				indexCountr++;
+			}
+		}
+		LineEndingBytes[indexCountr] = ftell(InPutFile);
+		indexCountr++;
+		
+		if (NumberOfActiveThreadsForTheProgram>= linesCounter) {
+			SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines(&ArrayWithLineStartingAndEndingIndexs, NumberOfActiveThreadsForTheProgram,  LineEndingBytes, linesCounter);
 		}
 		else{
-			SplitTheWorkEvenlyForAllThreads(&ArrayWithLineStartingAndEndingIndexs, NumberOfActiveThreadsForTheProgram, TotalBytesInFile);
+			SplitTheWorkEvenlyForAllThreads(&ArrayWithLineStartingAndEndingIndexs, NumberOfActiveThreadsForTheProgram,  LineEndingBytes, linesCounter);
 		}
 		
 
@@ -347,7 +373,12 @@ int* Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Ro
 	}
 	else {
 		printf("Couldn't Open The Files\n");
-		
+		int CurrentThreadNumber = 0;
+		for (int i = 0; i < NumberOfActiveThreadsForTheProgram; i++) {
+			ArrayWithLineStartingAndEndingIndexs[CurrentThreadNumber] = 0;
+			ArrayWithLineStartingAndEndingIndexs[CurrentThreadNumber + 1] = 0;
+			CurrentThreadNumber += 2;
+		}
 	}
 
 

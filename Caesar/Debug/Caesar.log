@@ -11,21 +11,11 @@ D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(182,20): w
 D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(198,16): warning C4018: '<': signed/unsigned mismatch
 D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(204,21): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
 D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(255,27): warning C4047: '==': 'int' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(263,32): warning C4047: '!=': 'int' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(324,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
-  main.c
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(61,35): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(61,31): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(62,35): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(62,31): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(63,35): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(63,31): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(23,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Caesar\main.c(24,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
-  Generating Code...
+D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(266,32): warning C4047: '!=': 'int' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(331,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
 D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(159): warning C4716: 'Decipher_Or_Encrypt': must return a value
-D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(356): warning C4715: 'Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Row_Indexs': not all control paths return a value
-D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(281): warning C4715: 'Return_Output_Path_From_Input_Path': not all control paths return a value
-D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(301): warning C4716: 'SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines': must return a value
-D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(319): warning C4716: 'SplitTheWorkEvenlyForAllThreads': must return a value
+D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(306): warning C4716: 'SplitTheWorkUniformlyAndSetLeftOverThreadWithZeroLines': must return a value
+D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(387): warning C4715: 'Split_The_File_For_Each_Thread_Return_Int_Array_With_Starting_And_Ending_Row_Indexs': not all control paths return a value
+D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(287): warning C4715: 'Return_Output_Path_From_Input_Path': not all control paths return a value
+D:\GitStuff\Operating_Systems_Ex2\Caesar\ThreadsAndThreadsFunctions.c(326): warning C4716: 'SplitTheWorkEvenlyForAllThreads': must return a value
   Caesar.vcxproj -> D:\GitStuff\Operating_Systems_Ex2\Caesar\Debug\Caesar.exe

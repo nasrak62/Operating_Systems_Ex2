@@ -8,3 +8,5 @@ Caesar.exe C:\Users\saar\Desktop\Top_Secret_File.txt 6 4 -d
 Caesar.exe C:\Users\saar\Desktop\decrypted.txt 6 4 -e
 Caesar.exe Top_Secret_File.txt 6 6 -d
 Caesar.exe decrypted.txt 6 6 -e
+Caesar.exe test1.txt 6 6 -e
+Caesar.exe encrypted.txt 6 6 -d
