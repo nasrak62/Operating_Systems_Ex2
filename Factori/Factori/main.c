@@ -30,20 +30,29 @@ int main(int argc,char* argv[]) {
 		DWORD *p_thread_ids = (DWORD*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(DWORD)));
 		PMYDATA ThreadpointerDataArray = (PMYDATA)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(MYDATA)));
 		HANDLE MutexForAccessingQueue = CreateMutex(NULL,FALSE,NULL);
+		HANDLE IsSomeBodyWritingMutex = CreateMutex(NULL, FALSE, NULL);
+		HANDLE IsSomeBodyReadingSemaphore = CreateSemaphore(NULL, 0, NumberOfActiveThreadsForTheProgram, NULL);
 		HANDLE Semaphore = CreateSemaphore(NULL,0, NumberOfActiveThreadsForTheProgram,NULL);
-		//Lock FileLock=InitializeLock();
+		HANDLE IsSomeBodyReadingEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 		
 
 		if (p_thread_handles == NULL || p_thread_ids == NULL
-			|| MutexForAccessingQueue == NULL || Semaphore == NULL) {
+			|| MutexForAccessingQueue == NULL || Semaphore == NULL
+			|| IsSomeBodyReadingSemaphore == NULL || IsSomeBodyWritingMutex == NULL
+			|| IsSomeBodyReadingEvent == NULL) {
 			printf("Malloc Or Mutex Failed\n");
 
 		}
 		else {
 			for (int i = 0; i <  NumberOfActiveThreadsForTheProgram ; i++) {
+				Lock* FileLock = InitializeLock();
+				FileLock->IsSomeBodyReadingSemaphore = IsSomeBodyReadingSemaphore;
+				FileLock->IsSomeBodyWritingMutex = IsSomeBodyWritingMutex;
+				FileLock->IsSomeBodyReadingEvent = IsSomeBodyReadingEvent;
+				FileLock->NumberOfActiveThreadsForTheProgram = NumberOfActiveThreadsForTheProgram;
 				ThreadpointerDataArray[i].ThreadNumber = i;
 				ThreadpointerDataArray[i].MissionFilePath = MissionFilePath;
-				//ThreadpointerDataArray[i].FileLock = FileLock;
+				ThreadpointerDataArray[i].FileLock = FileLock;
 				//ThreadpointerDataArray[i].MissionsPriorityQueue = MissionsPriorityQueue;
 				ThreadpointerDataArray[i].MutexForAccessingQueue= MutexForAccessingQueue;
 				ThreadpointerDataArray[i].Semaphore = Semaphore;
