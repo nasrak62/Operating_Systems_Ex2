@@ -1,3 +1,7 @@
+#include <stdio.h> 
+#include <stdlib.h>
+#include <math.h> 
+
 int how_many_prime_factors(int n)
 {
     int j = 0;
