@@ -71,3 +71,13 @@ void write_release(Lock* FileLock) {
 	release_IsSomeBodyWritingMutex = ReleaseMutex(FileLock->IsSomeBodyWritingMutex);
 	assert(release_IsSomeBodyWritingMutex == FALSE);
 }
+
+void DestroyLock(Lock* FileLock) {
+	free(FileLock->IAmReading);
+	free(FileLock->IAmWriting);
+	free(FileLock->IsSomeBodyWritingMutex);
+	free(FileLock->IsSomeBodyReadingSemaphore);
+	free(FileLock->NumberOfActiveThreadsForTheProgram);
+	free(FileLock);
+	FileLock = NULL;
+}
