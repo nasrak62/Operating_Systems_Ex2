@@ -1,0 +1,8 @@
+﻿  main.c
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\main.c(66,35): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\main.c(66,31): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\main.c(67,35): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\main.c(67,31): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\main.c(68,35): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\main.c(68,31): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+  Factori.vcxproj -> D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\Debug\Factori.exe

@@ -1,0 +1,6 @@
+25
+13
+1337
+The prime factors of 13 are: 13
+
+91

@@ -1,15 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h>
-#include <stdbool.h>
+#include "Queue.h"
 
-typedef struct Queue
-{
-    int capacity;
-    int size;
-    int front;
-    int rear;
-    int* elements;
-}Queue;
 Queue* InitializeQueue(int maxElements)
 {
     Queue* Q;
@@ -88,4 +80,49 @@ void DestroyQueue(Queue* Q)
             break;
     }
     Q = NULL;
+}
+
+int max_line_size(char* PriorityFilePath)
+{
+    FILE* TasksPriorities = NULL;
+    errno_t input_error;
+    input_error = fopen_s(&TasksPriorities, PriorityFilePath, "r");
+    char ch;
+    int max = 0, i = 0;
+    do
+        if ((ch = fgetc(TasksPriorities)) != EOF && ch != '\n') i++;
+        else {
+            if (i > max) max = i;
+            i = 0;
+        }
+    while (ch != EOF);
+    fclose(TasksPriorities);
+    return max + 4; //for \n and \r
+}
+void FillMissionsPriorityQueue(int LinesNumber, Queue* Q, char* PriorityFilePath)
+{
+    int i;
+    int max_size = max_line_size(PriorityFilePath);
+    FILE* TasksPriorities = NULL;
+    errno_t input_error;
+    input_error = fopen_s(&TasksPriorities, PriorityFilePath, "r");
+    if (input_error == 0)
+    {
+        char* priority = (char*)malloc((max_size * sizeof(char)));
+        if (NULL != priority)
+        {
+            for (i = 1; i < LinesNumber + 1; i++)
+            {
+                fgets(priority, max_size, TasksPriorities);
+                Push(Q, atoi(priority));
+            }
+        }
+        else
+            printf("Memory Allocation failure!");
+    }
+    else
+    {
+        printf("Couldn't open TasksPriorities.txt");
+    }
+    fclose(TasksPriorities);
 }
