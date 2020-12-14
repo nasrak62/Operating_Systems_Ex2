@@ -2,7 +2,6 @@
 #include "Prime.h"
 
 void ReadLineFromFileFunction(PMYDATA ThreadpointerData, int StartingByte, int FinishByte, HANDLE HandleFile, DWORD* dwBytesRead, char** Line, int LineSize) {
-	printf("Thread %d in read\n", ThreadpointerData->ThreadNumber);
 	OVERLAPPED OverLappedRead = { 0 };
 	OverLappedRead.Offset = StartingByte;
 	DWORD WaitReadLock;
@@ -43,43 +42,46 @@ char* ConvertArrayToString(int* ThePrimeNumbersArray, int NumberToPrime,  int St
 	int SizeOfLine= (FinishByte - StartingByte)+ sizeof("The prime factors of %d are: \r\n")+ SizeOfArray*sizeof(ThePrimeNumbersArray);
 	char* PrimeNumberWriteFormat= (char*)malloc(SizeOfLine * sizeof(char));
 	char* TheNumbers = (char*)malloc(SizeOfLine * sizeof(char));
-	if (sprintf_s(PrimeNumberWriteFormat, SizeOfLine, "The prime factors of %d are: ", NumberToPrime)== -1) {
-		printf("sprintf_s failed\n");
-	}
-	for (int i = 0; i < SizeOfArray;i++) {
-		if (i < SizeOfArray -1) {
-			if (sprintf_s(TheNumbers, SizeOfLine, "%d, ", ThePrimeNumbersArray[i]) == -1) {
-				printf("sprintf_s failed\n");
+	if (NULL!= TheNumbers || NULL != PrimeNumberWriteFormat) {
+
+		if (sprintf_s(PrimeNumberWriteFormat, SizeOfLine, "The prime factors of %d are: ", NumberToPrime) == -1) {
+			printf("sprintf_s failed\n");
+		}
+		for (int i = 0; i < SizeOfArray; i++) {
+			if (i < SizeOfArray - 1) {
+				if (sprintf_s(TheNumbers, SizeOfLine, "%d, ", ThePrimeNumbersArray[i]) == -1) {
+					printf("sprintf_s failed\n");
+				}
+
 			}
-			
-		}
-		else {
-			if (sprintf_s(TheNumbers, SizeOfLine, "%d\r\n", ThePrimeNumbersArray[i]) == -1) {
-				printf("sprintf_s failed\n");
+			else {
+				if (sprintf_s(TheNumbers, SizeOfLine, "%d\r\n", ThePrimeNumbersArray[i]) == -1) {
+					printf("sprintf_s failed\n");
+				}
 			}
+			if (strcat_s(PrimeNumberWriteFormat, SizeOfLine, TheNumbers) != 0) {
+				printf("strcat failed\n");
+			}
+
+
 		}
-		if (strcat_s(PrimeNumberWriteFormat, SizeOfLine, TheNumbers)!=0) {
-			printf("strcat failed\n");
-		}
-		
-		
+
 	}
+	
 	return  PrimeNumberWriteFormat;
 }
 
 void WriteLineToFileFunction(PMYDATA ThreadpointerData, HANDLE HandleFile, DWORD dwBytesRead, char* Line) {
-	printf("Thread %d in write\n", ThreadpointerData->ThreadNumber);
 	DWORD dwBytesWritten;
 	DWORD WaitWriteLock;
-	OVERLAPPED OverLappedWrite = { 0 };
-	OverLappedWrite.Offset = ThreadpointerData->MaxNumberOfBytes;
-	printf("Line %s\n", Line);
-	printf("ThreadpointerData->MaxNumberOfBytes %d\n", ThreadpointerData->MaxNumberOfBytes);
+	//OVERLAPPED OverLappedWrite = { 0 };
 	write_lock(ThreadpointerData->FileLock);
-	//SetEndOfFile(HandleFile);
-	WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten, &OverLappedWrite);
-	ThreadpointerData->MaxNumberOfBytes+= dwBytesWritten;
-	printf("ThreadpointerData->MaxNumberOfBytes %d\n", ThreadpointerData->MaxNumberOfBytes);
+	SetFilePointer(HandleFile,NULL,NULL,FILE_END);
+	//OverLappedWrite.Offset = ThreadpointerData->MaxNumberOfBytes;
+	WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten,0 );
+	//ThreadpointerData->MaxNumberOfBytes+= dwBytesWritten;
+	//printf("Line is %s\n from byte %d to byte %d and thread number is %d\n", Line, ThreadpointerData->MaxNumberOfBytes - dwBytesWritten,
+		//ThreadpointerData->MaxNumberOfBytes, ThreadpointerData->ThreadNumber);
 	write_release(ThreadpointerData->FileLock);
 
 }
@@ -88,7 +90,6 @@ void WriteLineToFileFunction(PMYDATA ThreadpointerData, HANDLE HandleFile, DWORD
 
 void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte) {
 
-	printf("Thread %d Workwithfile\n", ThreadpointerData->ThreadNumber);
 	DWORD WaitReadLock;
 	HANDLE HandleFile = CreateFile(ThreadpointerData->MissionFilePath, GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -98,12 +99,13 @@ void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte
 	int NumberToPrime=0;
 	int* ThePrimeNumbersArray;
 	char* LineToWrite;
-	if (HandleFile == INVALID_HANDLE_VALUE)
+	if (HandleFile == INVALID_HANDLE_VALUE  || Line==NULL)
 	{
-		printf("Error Reading\n");
+		printf("Error in Reading Or Malloc\n");
 
 	}
 	else {
+
 		ReadLineFromFileFunction(ThreadpointerData, StartingByte, FinishByte, HandleFile,
 			&dwBytesRead, &Line, LineSize);
 		NumberToPrime = ProcessLineToInt(Line, LineSize);

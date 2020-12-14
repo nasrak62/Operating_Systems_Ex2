@@ -20,13 +20,13 @@ DWORD read_lock(Lock* FileLock) {
 	DWORD wait_IAmReading;
 	DWORD wait_IsSomeBodyReadingSemaphore;
 	DWORD release_IsSomeBodyWritingMutex;
-	printf("readlock\n");
+	
 	wait_IsSomeBodyWritingMutex = WaitForSingleObject(FileLock->IsSomeBodyWritingMutex, TIMEOUT_IN_MILLISECONDS);
-	printf("after some one writing\n");
+	
 	wait_IsSomeBodyReadingSemaphore = WaitForSingleObject(FileLock->IsSomeBodyReadingSemaphore, TIMEOUT_IN_MILLISECONDS);
-	printf("after reading semaphore\n");
+	printf("can read\n");
 	release_IsSomeBodyWritingMutex = ReleaseMutex(FileLock->IsSomeBodyWritingMutex);
-	printf("after release semaphore\n");
+	
 	if(release_IsSomeBodyWritingMutex == FALSE) {
 		printf("release_IsSomeBodyWritingMutex not released\n");
 	}
@@ -40,10 +40,11 @@ DWORD read_lock(Lock* FileLock) {
 }
 
 void read_release(Lock* FileLock) {
-	printf("read_release\n");
+	
 	DWORD release_IsSomeBodyReadingSemaphore;
 	DWORD release_IAmReading;
 	release_IsSomeBodyReadingSemaphore =ReleaseSemaphore(FileLock->IsSomeBodyReadingSemaphore, 1, NULL);
+	printf("can't read\n");
 	if (release_IsSomeBodyReadingSemaphore == FALSE) {
 		printf("release_IsSomeBodyReadingSemaphore not released\n");
 	}
@@ -55,7 +56,6 @@ void read_release(Lock* FileLock) {
 
 
 void write_lock(Lock* FileLock) {
-	printf("write_lock\n");
 	DWORD wait_IsSomeBodyWritingMutex;
 	DWORD wait_IAmReading;
 	DWORD wait_IsSomeBodyReadingSemaphore;
@@ -65,6 +65,7 @@ void write_lock(Lock* FileLock) {
 	for (int i = 0; i < FileLock->NumberOfActiveThreadsForTheProgram;i++) {
 		wait_IsSomeBodyReadingSemaphore = WaitForSingleObject(FileLock->IsSomeBodyReadingSemaphore, TIMEOUT_IN_MILLISECONDS);
 	}
+	printf("can write\n");
 	release_IsSomeBodyReadingSemaphore = ReleaseSemaphore(FileLock->IsSomeBodyReadingSemaphore, FileLock->NumberOfActiveThreadsForTheProgram, NULL);
 	if (release_IsSomeBodyReadingSemaphore == FALSE) {
 		printf("release_IsSomeBodyReadingSemaphore not released\n");
@@ -79,7 +80,6 @@ void write_lock(Lock* FileLock) {
 }
 
 void write_release(Lock* FileLock) {
-	printf("write_release\n");
 	DWORD release_IsSomeBodyReadingSemaphore;
 	DWORD release_IAmReading;
 	DWORD release_IsSomeBodyWritingMutex;
@@ -92,6 +92,7 @@ void write_release(Lock* FileLock) {
 		printf("release_IAmReading not released\n");
 	}
 	release_IsSomeBodyWritingMutex = ReleaseMutex(FileLock->IsSomeBodyWritingMutex);
+	printf("can't write\n");
 	if (release_IsSomeBodyWritingMutex == FALSE) {
 		printf("release_IsSomeBodyWritingMutex not released\n");
 	}
