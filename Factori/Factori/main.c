@@ -33,7 +33,7 @@ int main(int argc,char* argv[]) {
 		if (p_thread_handles == NULL || p_thread_ids == NULL
 			|| MutexForAccessingQueue == NULL || Semaphore == NULL
 			|| IsSomeBodyReadingSemaphore == NULL || IsSomeBodyWritingMutex == NULL
-			|| IsSomeBodyReadingEvent == NULL) {
+			|| IsSomeBodyReadingEvent == NULL || ThreadpointerDataArray == NULL) {
 			printf("Malloc Or Mutex Failed\n");
 
 		}

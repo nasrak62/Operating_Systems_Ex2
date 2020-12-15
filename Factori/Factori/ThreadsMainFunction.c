@@ -11,20 +11,19 @@ void ReadLineFromFileFunction(PMYDATA ThreadpointerData, int StartingByte, int F
 	}
 	else {
 		
-
 		ReadFile(HandleFile, *Line, LineSize, dwBytesRead, &OverLappedRead);
 		if (*dwBytesRead > 0 && *dwBytesRead <= LineSize)
 		{
 			Line[*dwBytesRead] = '\0'; // NULL character
 		}
 		read_release(ThreadpointerData->FileLock);
-
+		
 	}
 
 }
 
 
-int ProcessLineToInt(char* Line, DWORD dwBytesRead) {
+int ProcessLineToInt(char* Line, int LineSize) {
 	int i = 0;
 	int ExtractNumber = 0;
 
@@ -72,16 +71,22 @@ char* ConvertArrayToString(int* ThePrimeNumbersArray, int NumberToPrime,  int St
 }
 
 void WriteLineToFileFunction(PMYDATA ThreadpointerData, HANDLE HandleFile, DWORD dwBytesRead, char* Line) {
-	DWORD dwBytesWritten;
-	DWORD WaitWriteLock;
-	//OVERLAPPED OverLappedWrite = { 0 };
+	
 	write_lock(ThreadpointerData->FileLock);
-	SetFilePointer(HandleFile,NULL,NULL,FILE_END);
-	//OverLappedWrite.Offset = ThreadpointerData->MaxNumberOfBytes;
-	WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten,0 );
-	//ThreadpointerData->MaxNumberOfBytes+= dwBytesWritten;
-	//printf("Line is %s\n from byte %d to byte %d and thread number is %d\n", Line, ThreadpointerData->MaxNumberOfBytes - dwBytesWritten,
-		//ThreadpointerData->MaxNumberOfBytes, ThreadpointerData->ThreadNumber);
+	SetFilePointer(HandleFile, NULL,NULL,FILE_END);
+	DWORD dwBytesWritten;
+	BOOL bfile=WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten,NULL );
+	if (bfile==false) {
+		if (HandleFile == INVALID_HANDLE_VALUE || Line == NULL)
+		{
+			printf("Error in Reading Or Malloc\n");
+
+		}
+		WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten, NULL);
+		printf("%ld\n", GetLastError());
+	}
+	printf("Line is %s\nbytes %d\n", Line,   dwBytesWritten);
+	printf("line str %d\n", strlen(Line));
 	write_release(ThreadpointerData->FileLock);
 
 }
@@ -92,7 +97,7 @@ void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte
 
 	DWORD WaitReadLock;
 	HANDLE HandleFile = CreateFile(ThreadpointerData->MissionFilePath, GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	char* Line = (char*)malloc((FinishByte - StartingByte) * sizeof(char));
 	int LineSize = ((FinishByte - StartingByte) * sizeof(char));
 	DWORD dwBytesRead;
@@ -112,6 +117,7 @@ void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte
 		ThePrimeNumbersArray = primeFactors(NumberToPrime);
 		LineToWrite=ConvertArrayToString(ThePrimeNumbersArray, NumberToPrime, StartingByte, FinishByte);
 		WriteLineToFileFunction(ThreadpointerData, HandleFile, dwBytesRead, LineToWrite);
+		
 		//free(LineToWrite);
 		//free(Line);
 		CloseHandle(HandleFile);
@@ -145,7 +151,7 @@ DWORD WINAPI SplitTheWorkForEachThread(LPVOID lpParam)
 			StartingByte = Top(ThreadpointerData->MissionsPriorityQueue);
 			Pop(ThreadpointerData->MissionsPriorityQueue);
 			release_res_MutexForAccessingQueue = ReleaseMutex(ThreadpointerData->MutexForAccessingQueue);
-			printf("Thread %d after queue\n", ThreadpointerData->ThreadNumber);
+	
 			for (int i = 0; i < ThreadpointerData->NumberOfMissions; i++) {
 				if (StartingByte==0) {
 					FinishByte = (ThreadpointerData->BytesForEachLine)[0];
@@ -246,8 +252,7 @@ int* MapRowsToBytesInFile(char* InputFilePath, int NumberOfLinesInFile) {
 				indexCountr++;
 			}
 		}
-		LineEndingBytes[indexCountr] = ftell(InPutFile);
-		indexCountr++;
+		
 
 		fclose(InPutFile);
 	}

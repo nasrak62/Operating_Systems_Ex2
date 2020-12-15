@@ -1,5 +1,5 @@
 #include "Lock.h"
-#include <assert.h>
+
 Lock* InitializeLock() {
 	Lock* FileLock;
 	FileLock= (Lock*)malloc(sizeof(Lock));
@@ -7,9 +7,6 @@ Lock* InitializeLock() {
 	FileLock->IAmWriting = CreateMutex(NULL, FALSE, NULL);
 	if (FileLock->IAmWriting == NULL || FileLock->IAmReading == NULL) {
 		printf("Malloc Or Mutex Failed\n");
-	}
-	else {
-		printf("Lock is ready\n");
 	}
 	return FileLock;
 }
@@ -24,7 +21,6 @@ DWORD read_lock(Lock* FileLock) {
 	wait_IsSomeBodyWritingMutex = WaitForSingleObject(FileLock->IsSomeBodyWritingMutex, TIMEOUT_IN_MILLISECONDS);
 	
 	wait_IsSomeBodyReadingSemaphore = WaitForSingleObject(FileLock->IsSomeBodyReadingSemaphore, TIMEOUT_IN_MILLISECONDS);
-	printf("can read\n");
 	release_IsSomeBodyWritingMutex = ReleaseMutex(FileLock->IsSomeBodyWritingMutex);
 	
 	if(release_IsSomeBodyWritingMutex == FALSE) {
@@ -44,7 +40,6 @@ void read_release(Lock* FileLock) {
 	DWORD release_IsSomeBodyReadingSemaphore;
 	DWORD release_IAmReading;
 	release_IsSomeBodyReadingSemaphore =ReleaseSemaphore(FileLock->IsSomeBodyReadingSemaphore, 1, NULL);
-	printf("can't read\n");
 	if (release_IsSomeBodyReadingSemaphore == FALSE) {
 		printf("release_IsSomeBodyReadingSemaphore not released\n");
 	}
@@ -65,7 +60,6 @@ void write_lock(Lock* FileLock) {
 	for (int i = 0; i < FileLock->NumberOfActiveThreadsForTheProgram;i++) {
 		wait_IsSomeBodyReadingSemaphore = WaitForSingleObject(FileLock->IsSomeBodyReadingSemaphore, TIMEOUT_IN_MILLISECONDS);
 	}
-	printf("can write\n");
 	release_IsSomeBodyReadingSemaphore = ReleaseSemaphore(FileLock->IsSomeBodyReadingSemaphore, FileLock->NumberOfActiveThreadsForTheProgram, NULL);
 	if (release_IsSomeBodyReadingSemaphore == FALSE) {
 		printf("release_IsSomeBodyReadingSemaphore not released\n");
@@ -92,7 +86,6 @@ void write_release(Lock* FileLock) {
 		printf("release_IAmReading not released\n");
 	}
 	release_IsSomeBodyWritingMutex = ReleaseMutex(FileLock->IsSomeBodyWritingMutex);
-	printf("can't write\n");
 	if (release_IsSomeBodyWritingMutex == FALSE) {
 		printf("release_IsSomeBodyWritingMutex not released\n");
 	}

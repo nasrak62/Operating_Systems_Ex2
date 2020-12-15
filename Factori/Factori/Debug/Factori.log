@@ -1,14 +1,13 @@
 ﻿  ThreadsMainFunction.c
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(16,40): warning C4018: '<=': signed/unsigned mismatch
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(79,32): warning C4047: 'function': 'LONG' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(79,28): warning C4024: 'SetFilePointer': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(76,8): warning C4101: 'WaitWriteLock': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(93,8): warning C4101: 'WaitReadLock': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(134,6): warning C4101: 'WhatLineToRead': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(190,17): warning C4018: '<': signed/unsigned mismatch
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(204,20): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(220,16): warning C4018: '<': signed/unsigned mismatch
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(226,21): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(236,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(175): warning C4716: 'SplitTheWorkForEachThread': must return a value
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(15,40): warning C4018: '<=': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(76,33): warning C4047: 'function': 'LONG' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(76,29): warning C4024: 'SetFilePointer': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(98,8): warning C4101: 'WaitReadLock': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(140,6): warning C4101: 'WhatLineToRead': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(196,17): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(210,20): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(226,16): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(232,21): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(242,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(181): warning C4716: 'SplitTheWorkForEachThread': must return a value
   Factori.vcxproj -> D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\Debug\Factori.exe
