@@ -2,6 +2,7 @@
 21
 10000
 8
-The prime factors of 21 are: 3, 7
-The prime factors of 10000 are: 2, 2, 2, 2, 5, 5, 5, 5
-The prime factors of 14 are: 2, 7
+1
+2
+3
+4
