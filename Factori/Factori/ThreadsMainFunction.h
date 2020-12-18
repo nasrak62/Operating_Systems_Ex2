@@ -7,8 +7,6 @@
 #include "Queue.h"
 #define THREADS_MAIN_FUNCTION
 #define RANDOM_RANGE_START_FROM_ONE 1
-#define ONE_HAS_NO_PRIME 1
-#define ZERO_HAS_NO_PRIME 0
 typedef struct MyData {
     int ThreadNumber;
     char* MissionFilePath;

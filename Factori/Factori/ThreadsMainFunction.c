@@ -10,22 +10,14 @@ void ReadLineFromFileFunction(PMYDATA ThreadpointerData, int StartingByte, int F
 		printf("error should terminate stuff now\n");
 	}
 	else {
-		if (HandleFile == 0)
-		{
-			printf("Error in handle rr\n");
-
-		}
+		
 		ReadFile(HandleFile, *Line, LineSize, dwBytesRead, &OverLappedRead);
 		if (*dwBytesRead > 0 && *dwBytesRead <= LineSize)
 		{
 			Line[*dwBytesRead] = '\0'; // NULL character
 		}
 		read_release(ThreadpointerData->FileLock);
-		if (HandleFile == 0)
-		{
-			printf("Error in handle rrr\n");
-
-		}
+		
 	}
 
 }
@@ -45,49 +37,33 @@ int ProcessLineToInt(char* Line, int LineSize) {
 }
 
 char* ConvertArrayToString(int* ThePrimeNumbersArray, int NumberToPrime,  int StartingByte, int FinishByte) {
-	int SizeOfArray;
-	int SizeOfLine;
-	if (NumberToPrime == ZERO_HAS_NO_PRIME || NumberToPrime == ONE_HAS_NO_PRIME) {
-		SizeOfLine = (FinishByte - StartingByte) + sizeof("The prime factors of %d are: \r\n") + 1;
-	}
-	else {
-		SizeOfArray = how_many_prime_factors(NumberToPrime);
-		SizeOfLine = (FinishByte - StartingByte) + sizeof("The prime factors of %d are: \r\n") + SizeOfArray * sizeof(ThePrimeNumbersArray);
-	}
+	int SizeOfArray = how_many_prime_factors(NumberToPrime);
+	int SizeOfLine= (FinishByte - StartingByte)+ sizeof("The prime factors of %d are: \r\n")+ SizeOfArray*sizeof(ThePrimeNumbersArray);
 	char* PrimeNumberWriteFormat= (char*)malloc(SizeOfLine * sizeof(char));
 	char* TheNumbers = (char*)malloc(SizeOfLine * sizeof(char));
 	if (NULL!= TheNumbers || NULL != PrimeNumberWriteFormat) {
 
-		
-		if (NumberToPrime == ZERO_HAS_NO_PRIME || NumberToPrime== ONE_HAS_NO_PRIME) {
-			if (sprintf_s(PrimeNumberWriteFormat, SizeOfLine, "The prime factors of %d are: \r\n", NumberToPrime) == -1) {
-				printf("sprintf_s failed\n");
-			}
+		if (sprintf_s(PrimeNumberWriteFormat, SizeOfLine, "The prime factors of %d are: ", NumberToPrime) == -1) {
+			printf("sprintf_s failed\n");
 		}
-		else {
-			if (sprintf_s(PrimeNumberWriteFormat, SizeOfLine, "The prime factors of %d are: ", NumberToPrime) == -1) {
-				printf("sprintf_s failed\n");
-			}
-			for (int i = 0; i < SizeOfArray; i++) {
-				if (i < SizeOfArray - 1) {
-					if (sprintf_s(TheNumbers, SizeOfLine, "%d, ", ThePrimeNumbersArray[i]) == -1) {
-						printf("sprintf_s failed\n");
-					}
-
+		for (int i = 0; i < SizeOfArray; i++) {
+			if (i < SizeOfArray - 1) {
+				if (sprintf_s(TheNumbers, SizeOfLine, "%d, ", ThePrimeNumbersArray[i]) == -1) {
+					printf("sprintf_s failed\n");
 				}
-				else {
-					if (sprintf_s(TheNumbers, SizeOfLine, "%d\r\n", ThePrimeNumbersArray[i]) == -1) {
-						printf("sprintf_s failed\n");
-					}
-				}
-				if (strcat_s(PrimeNumberWriteFormat, SizeOfLine, TheNumbers) != 0) {
-					printf("strcat failed\n");
-				}
-
 
 			}
+			else {
+				if (sprintf_s(TheNumbers, SizeOfLine, "%d\r\n", ThePrimeNumbersArray[i]) == -1) {
+					printf("sprintf_s failed\n");
+				}
+			}
+			if (strcat_s(PrimeNumberWriteFormat, SizeOfLine, TheNumbers) != 0) {
+				printf("strcat failed\n");
+			}
+
+
 		}
-		
 
 	}
 	
@@ -97,27 +73,13 @@ char* ConvertArrayToString(int* ThePrimeNumbersArray, int NumberToPrime,  int St
 void WriteLineToFileFunction(PMYDATA ThreadpointerData, HANDLE HandleFile, DWORD dwBytesRead, char* Line) {
 	
 	write_lock(ThreadpointerData->FileLock);
-	if (HandleFile == 0)
-	{
-		printf("Error in handle\n");
-
-	}
 	SetFilePointer(HandleFile, NULL,NULL,FILE_END);
-	if ( HandleFile == 0 )
-	{
-		CloseHandle(HandleFile);
-		HANDLE HandleFile = CreateFile(ThreadpointerData->MissionFilePath, GENERIC_READ | GENERIC_WRITE,
-			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		//SetFilePointer(HandleFile, NULL, NULL, FILE_END);
-		printf("Error in Reading Or Malloc\n");
-
-	}
 	DWORD dwBytesWritten;
 	BOOL bfile=WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten,NULL );
 	if (bfile==false) {
-		if ( HandleFile == 0 )
+		if (HandleFile == INVALID_HANDLE_VALUE || Line == NULL)
 		{
-			printf("HandleFile == 0\n");
+			printf("Error in Reading Or Malloc\n");
 
 		}
 		WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten, NULL);
@@ -151,19 +113,11 @@ void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte
 
 		ReadLineFromFileFunction(ThreadpointerData, StartingByte, FinishByte, HandleFile,
 			&dwBytesRead, &Line, LineSize);
-		if (HandleFile == 0)
-		{
-			printf("Error in handle r\n");
-			CloseHandle(HandleFile);
-			HandleFile = CreateFile(ThreadpointerData->MissionFilePath, GENERIC_READ | GENERIC_WRITE,
-				FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-		}
 		NumberToPrime = ProcessLineToInt(Line, LineSize);
 		ThePrimeNumbersArray = primeFactors(NumberToPrime);
 		LineToWrite=ConvertArrayToString(ThePrimeNumbersArray, NumberToPrime, StartingByte, FinishByte);
 		WriteLineToFileFunction(ThreadpointerData, HandleFile, dwBytesRead, LineToWrite);
-		
+		OpenHandle(HandleFile);
 		//free(LineToWrite);
 		//free(Line);
 		CloseHandle(HandleFile);

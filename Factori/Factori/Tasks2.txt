@@ -1,8 +1,6 @@
 14
-21
-10000
-8
 1
 2
-3
-4
+5
+
+The prime factors of 14 are: 2, 7
