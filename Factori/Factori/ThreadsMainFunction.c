@@ -117,7 +117,6 @@ void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte
 		ThePrimeNumbersArray = primeFactors(NumberToPrime);
 		LineToWrite=ConvertArrayToString(ThePrimeNumbersArray, NumberToPrime, StartingByte, FinishByte);
 		WriteLineToFileFunction(ThreadpointerData, HandleFile, dwBytesRead, LineToWrite);
-		OpenHandle(HandleFile);
 		//free(LineToWrite);
 		//free(Line);
 		CloseHandle(HandleFile);
