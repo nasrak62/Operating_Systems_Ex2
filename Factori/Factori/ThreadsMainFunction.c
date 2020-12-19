@@ -108,7 +108,6 @@ void WriteLineToFileFunction(PMYDATA ThreadpointerData, HANDLE HandleFile, DWORD
 		CloseHandle(HandleFile);
 		HANDLE HandleFile = CreateFile(ThreadpointerData->MissionFilePath, GENERIC_READ | GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		//SetFilePointer(HandleFile, NULL, NULL, FILE_END);
 		printf("Error in Reading Or Malloc\n");
 
 	}
@@ -164,8 +163,8 @@ void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte
 		LineToWrite=ConvertArrayToString(ThePrimeNumbersArray, NumberToPrime, StartingByte, FinishByte);
 		WriteLineToFileFunction(ThreadpointerData, HandleFile, dwBytesRead, LineToWrite);
 		
-		//free(LineToWrite);
-		//free(Line);
+		free(LineToWrite);
+		free(Line);
 		CloseHandle(HandleFile);
 	}
 

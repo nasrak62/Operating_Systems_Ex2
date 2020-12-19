@@ -1,7 +1,7 @@
 /* File Header: Comments:
 * Authors- Saar Zaidfunden -205892334, Jonathan Johansson-308034107
 * Project- IOS_EX3 -
-Description- This main function 
+Description- This main function creates the threads, fill the queue and initialize the lock
 
 */
 #include "ThreadsMainFunction.h"
@@ -15,10 +15,10 @@ int main(int argc,char* argv[]) {
 		char* PriorityFilePath = argv[2];
 		int NumberOfMissions = atoi(argv[3]);
 		int NumberOfActiveThreadsForTheProgram = atoi(argv[4]);
-		int* BytesForEachLine = MapRowsToBytesInFile(MissionFilePath, NumberOfMissions);//may need to add plus one some where cause of the going down a line
+		int* BytesForEachLine = MapRowsToBytesInFile(MissionFilePath, NumberOfMissions);
 		Queue *MissionsPriorityQueue= InitializeQueue(NumberOfMissions);
 		FillMissionsPriorityQueue(NumberOfMissions,MissionsPriorityQueue,PriorityFilePath);
-		//Create Threads to the thread function  and get queue and lock struct as parameters
+		
 		
 		HANDLE *p_thread_handles = (HANDLE*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(HANDLE)));
 		DWORD *p_thread_ids = (DWORD*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (NumberOfActiveThreadsForTheProgram * sizeof(DWORD)));

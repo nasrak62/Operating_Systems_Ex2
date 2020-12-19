@@ -1,3 +1,13 @@
-﻿  Prime.c
-C:\Users\Jonathan Johansson\Desktop\Factori\Factori\Prime.c(34): warning C4172: returning address of local variable or temporary: factors
-  Factori.vcxproj -> C:\Users\Jonathan Johansson\Desktop\Factori\Factori\Debug\Factori.exe
+﻿  ThreadsMainFunction.c
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(19,40): warning C4018: '<=': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(105,33): warning C4047: 'function': 'LONG' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(105,29): warning C4024: 'SetFilePointer': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(135,8): warning C4101: 'WaitReadLock': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(185,6): warning C4101: 'WhatLineToRead': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(241,17): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(255,20): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(271,16): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(277,21): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(287,1): warning C4047: 'initializing': 'errno_t' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\ThreadsMainFunction.c(226): warning C4716: 'SplitTheWorkForEachThread': must return a value
+  Factori.vcxproj -> D:\GitStuff\Operating_Systems_Ex2\Factori\Factori\Debug\Factori.exe
