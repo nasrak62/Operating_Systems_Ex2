@@ -4,6 +4,8 @@
 
 int how_many_prime_factors(int n)
 {
+    if (n == 0 || n == 1)
+        return 1;
     int j = 0;
     while (n % 2 == 0)
     {
@@ -26,6 +28,11 @@ int how_many_prime_factors(int n)
 }
 int* primeFactors(int n)
 {
+    if (n == 0 || n == 1)
+    {
+        int factors[1] = { n };
+        return factors;
+    }
     int max_size = how_many_prime_factors(n);
     int* factors = (int*)malloc((max_size * sizeof(int)));
     int j = 0;

@@ -1,6 +1,16 @@
 14
+21
+10000
+8
 1
-2
-5
-
+0
+3
+4
 The prime factors of 14 are: 2, 7
+The prime factors of 21 are: 3, 7
+The prime factors of 8 are: 2, 2, 2
+The prime factors of 0 are: 
+The prime factors of 1 are: 
+The prime factors of 3 are: 3
+The prime factors of 10000 are: 2, 2, 2, 2, 5, 5, 5, 5
+The prime factors of 4 are: 2, 2
