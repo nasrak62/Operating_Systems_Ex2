@@ -10,22 +10,12 @@ void ReadLineFromFileFunction(PMYDATA ThreadpointerData, int StartingByte, int F
 		printf("error should terminate stuff now\n");
 	}
 	else {
-		if (HandleFile == 0)
-		{
-			printf("Error in handle rr\n");
-
-		}
 		ReadFile(HandleFile, *Line, LineSize, dwBytesRead, &OverLappedRead);
 		if (*dwBytesRead > 0 && *dwBytesRead <= LineSize)
 		{
 			Line[*dwBytesRead] = '\0'; // NULL character
 		}
 		read_release(ThreadpointerData->FileLock);
-		if (HandleFile == 0)
-		{
-			printf("Error in handle rrr\n");
-
-		}
 	}
 
 }
@@ -120,10 +110,7 @@ void WriteLineToFileFunction(PMYDATA ThreadpointerData, HANDLE HandleFile, DWORD
 
 		}
 		WriteFile(HandleFile, Line, strlen(Line), &dwBytesWritten, NULL);
-		printf("%ld\n", GetLastError());
 	}
-	printf("Line is %s\nbytes %d\n", Line,   dwBytesWritten);
-	printf("line str %d\n", strlen(Line));
 	write_release(ThreadpointerData->FileLock);
 
 }
@@ -152,7 +139,6 @@ void WorkWithTheFile(PMYDATA ThreadpointerData, int StartingByte, int FinishByte
 			&dwBytesRead, &Line, LineSize);
 		if (HandleFile == 0)
 		{
-			printf("Error in handle r\n");
 			CloseHandle(HandleFile);
 			HandleFile = CreateFile(ThreadpointerData->MissionFilePath, GENERIC_READ | GENERIC_WRITE,
 				FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
