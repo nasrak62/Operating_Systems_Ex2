@@ -1,0 +1,16 @@
+﻿  SocketFunctions.c
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(18,23): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(24,34): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(31,26): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(35,19): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(41,30): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(57,13): warning C4133: 'function': incompatible types - from 'int *' to 'const char *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(63,34): error C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(182,110): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(182,68): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(196,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(196,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(197,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(197,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(198,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(198,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2

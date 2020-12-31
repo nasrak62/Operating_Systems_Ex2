@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{82a1b9fc-fe9f-4bdb-b0b7-0f6de1eed416}</ProjectGuid>
-    <RootNamespace>serverexe</RootNamespace>
+    <ProjectGuid>{37e483ac-e130-44e6-9419-141cff071a94}</ProjectGuid>
+    <RootNamespace>Client</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Server</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -73,7 +72,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\..\Shared Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -143,11 +141,9 @@
   <ItemGroup>
     <ClCompile Include="..\Shared Files\Messeges.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="SocketFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared Files\Messeges.h" />
-    <ClInclude Include="SocketFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,8 +21,7 @@ int main(int argc, char* argv[]) {
 			return 1;
 		}
 		else {
-			CreateSocketBindItAndListen(PortNumber);
-			
+			HandleCommuniction(PortNumber);
 			
 			// Deinitialize Winsock
 			WSA_Result = WSACleanup();

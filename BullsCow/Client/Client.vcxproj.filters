@@ -14,27 +14,21 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Shared Header Files">
-      <UniqueIdentifier>{97edf476-35a4-4e74-b7ad-d1356e52686a}</UniqueIdentifier>
+      <UniqueIdentifier>{f357c176-7181-429a-8ec6-24954bb3afe5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shared C Files">
-      <UniqueIdentifier>{10dccf95-5a3d-4c3c-9cee-3dedfd47605c}</UniqueIdentifier>
+      <UniqueIdentifier>{1ea2bf66-bbbc-49d2-bf5f-1da86fe14869}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketFunctions.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Shared Files\Messeges.c">
       <Filter>Shared C Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SocketFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Shared Files\Messeges.h">
       <Filter>Shared Header Files</Filter>
     </ClInclude>
