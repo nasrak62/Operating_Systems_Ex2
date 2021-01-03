@@ -21,15 +21,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Shared Files\Messeges.c">
-      <Filter>Shared C Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared Files\Messages.c">
+      <Filter>Shared C Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Shared Files\Messeges.h">
+    <ClInclude Include="..\Shared Files\Messages.h">
       <Filter>Shared Header Files</Filter>
     </ClInclude>
   </ItemGroup>

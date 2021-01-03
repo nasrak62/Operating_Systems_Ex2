@@ -141,12 +141,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Shared Files\Messeges.c" />
+    <ClCompile Include="..\Shared Files\Messages.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="SocketFunctions.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Shared Files\Messeges.h" />
+    <ClInclude Include="..\Shared Files\Messages.h" />
     <ClInclude Include="SocketFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -10,8 +10,9 @@
 #define NUMBER_TO_REUSE_ADDRESS 1
 #define BRUTAL_TERMINATION_CODE 0x55
 #define ERROR_CODE ((int)(-1))
-#define TIMEOUT_IN_MILLISECONDS   40000
+#define TIMEOUT_IN_MILLISECONDS   15000
 #define MILLISECONDS_DEFENITION   1000
+#define MAXIMUM_NAME_LENGHT 20
 
 #include <stdbool.h>
 #include <stdio.h> 
@@ -26,6 +27,7 @@ typedef struct MyData {
     HANDLE MutexForAccessingQueue;
     HANDLE Semaphore;
     SOCKET ServerSocket;
+    char ClientName[MAXIMUM_NAME_LENGHT];
     bool InUse;
 } MYDATA, * PMYDATA;
 

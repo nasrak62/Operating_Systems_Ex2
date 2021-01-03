@@ -27,7 +27,7 @@
     <ClCompile Include="SocketFunctions.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared Files\Messeges.c">
+    <ClCompile Include="..\Shared Files\Messages.c">
       <Filter>Shared C Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClInclude Include="SocketFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared Files\Messeges.h">
+    <ClInclude Include="..\Shared Files\Messages.h">
       <Filter>Shared Header Files</Filter>
     </ClInclude>
   </ItemGroup>

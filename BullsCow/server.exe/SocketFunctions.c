@@ -1,5 +1,5 @@
 #include "SocketFunctions.h" 
-#include "Messeges.h"
+#include "Messages.h"
 #include <string.h> 
 
 void CheckThreadsStatus(PMYDATA THreadDataArguments, HANDLE** p_thread_handles, int NumberOfActiveThreadsForTheProgram) {
@@ -50,8 +50,10 @@ void CheckThreadsStatus(PMYDATA THreadDataArguments, HANDLE** p_thread_handles, 
 bool CreateSocketBindItAndListen(int* Socket, struct sockaddr_in* Address, int PortNumber) {
     bool SocketProccess = true;
     int opt = NUMBER_TO_REUSE_ADDRESS;
-    if (((*Socket) = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+    if (((*Socket) = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
     {
+        printf("Error at socket( ): %ld\n", WSAGetLastError());
+       // goto server_cleanup_1;
         SocketProccess = false;
     }
     if (setsockopt((*Socket), SOL_SOCKET, SO_REUSEADDR,
@@ -63,13 +65,22 @@ bool CreateSocketBindItAndListen(int* Socket, struct sockaddr_in* Address, int P
     (*Address).sin_family = AF_INET;
     (*Address).sin_addr.s_addr = inet_addr(LOCAL_HOST);
     (*Address).sin_port = htons(PortNumber);
+   
+    if ((*Address).sin_addr.s_addr == INADDR_NONE)
+    {
+        printf("The string \"%s\" cannot be converted into an ip address. ending program.\n",
+            LOCAL_HOST);
+        //goto server_cleanup_2;
+    }
 
     if (bind((*Socket), (struct sockaddr*)Address, sizeof(*Address)) == SOCKET_ERROR)
     {
+        printf("bind( ) failed with error %ld. Ending program\n", WSAGetLastError());
         SocketProccess = false;
     }
     if (listen((*Socket), SOMAXCONN) == SOCKET_ERROR)
     {
+        printf("Failed listening on socket, error %ld.\n", WSAGetLastError());
         SocketProccess = false;
     }
     return SocketProccess;
@@ -77,9 +88,9 @@ bool CreateSocketBindItAndListen(int* Socket, struct sockaddr_in* Address, int P
 
 SOCKET AcceptConnection(SOCKET ServerSocket) {
     SOCKET AcceptClientSocket;
-    if (AcceptClientSocket = accept(ServerSocket, NULL, NULL) == INVALID_SOCKET)
+    if ((AcceptClientSocket = accept(ServerSocket, NULL, NULL) == INVALID_SOCKET))
     {
-        printf("Can't Accept Browser\n");
+        printf("Accepting connection with client failed, error %ld\n", WSAGetLastError());
         //goto
     }
 
@@ -87,7 +98,21 @@ SOCKET AcceptConnection(SOCKET ServerSocket) {
 
 }
 
-
+void AcceptChoice(PMYDATA ThreadpointerData) {
+    char* ParametersToRecieve = NULL;
+    Message ReceivedMessage;
+    ReceivedMessage = GetRequest(ThreadpointerData->ServerSocket, &ParametersToRecieve);
+    if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "CLIENT_VERSUS"))
+    {
+        //CheckForAnotherOpponent(); 15 sec
+        //true send invite
+        //false send SERVER_NO_OPPONENTS
+        
+    }
+    else if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "EXIT")) {  //not exit
+       
+    }
+}
 
 
 DWORD WINAPI HandleClient(LPVOID lpParam)
@@ -96,16 +121,30 @@ DWORD WINAPI HandleClient(LPVOID lpParam)
     ThreadpointerData = (PMYDATA)lpParam;
     bool ExitCommand = false;
     bool ClientRequestWasSent = false;
-    Messege Main;
+    char* ParametersToRecieve=NULL;
+    Message ReceivedMessage;
+    
+   
+
     while (!ExitCommand) {
-        if (!ClientRequestWasSent) {
-            //GetClientRequest();
-            //save data
-            //SendConfirmForClientRequest();
+        if (!ClientRequestWasSent) {//check 15 sec
+
+            ReceivedMessage=GetRequest(ThreadpointerData->ServerSocket, &ParametersToRecieve);
+            if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "CLIENT_REQUEST"))
+            {
+                strcpy(ThreadpointerData->ClientName,ReceivedMessage.Parameters[0]);
+                ClientRequestWasSent = true;
+            }
+            else if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "EXIT")) {  //not exit
+                ExitCommand = true;
+            }
+            SendRequest(ThreadpointerData->ServerSocket, "SERVER_APPROVED\n");
         }
-        //SendMainMenu();
-        //AcceptChoice();
+        SendRequest(ThreadpointerData->ServerSocket, "SERVER_MAIN_MENU\n");
+        AcceptChoice(ThreadpointerData);
         //play or quit
+        closesocket(ThreadpointerData->ServerSocket);
+        //relese thread and message stuff
     }
     
     
@@ -123,16 +162,8 @@ DWORD WINAPI DenieClient(LPVOID lpParam)
 {
     PMYDATA ThreadpointerData;
     ThreadpointerData = (PMYDATA)lpParam;
-   
-
-   //SendMassage server denie
-   //close socket
-
-
-
-
-
-
+    SendRequest(ThreadpointerData->ServerSocket, "SERVER_DENIED\n");
+    closesocket(ThreadpointerData->ServerSocket);
 }
 
 int NumberOfActiveSockets(PMYDATA ThreadpointerDataArray) {
@@ -174,9 +205,11 @@ void HandleCommuniction(int PortNumber) {
 
             while (!ExitCommand) {
                 if (ThreadpointerDataArray[CurrentThreadNumber].InUse == false) {
+                    printf("Waiting for a client to connect...\n");
                     ThreadpointerDataArray[CurrentThreadNumber].InUse = true;
                     ThreadpointerDataArray[CurrentThreadNumber].ThreadNumber = CurrentThreadNumber;
                     ThreadpointerDataArray[CurrentThreadNumber].ServerSocket = AcceptConnection(ServerSocket);
+                    printf("Client %d Connected.\n", CurrentThreadNumber);
                     if (NumberOfActiveSockets(ThreadpointerDataArray)< MAX_NUM_OF_ACTIVE_CONNECTIONS) {
                         (p_thread_handles)[CurrentThreadNumber] = CreateThread(NULL, 0, HandleClient, &ThreadpointerDataArray[CurrentThreadNumber], 0, NULL);
                     }
