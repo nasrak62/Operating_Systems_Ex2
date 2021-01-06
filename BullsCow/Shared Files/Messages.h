@@ -1,7 +1,7 @@
 #ifndef MESSAGES
 #define MESSAGES
 #define STRINGS_ARE_EQUAL( Str1, Str2 ) ( strcmp( (Str1), (Str2) ) == 0 )
-#define MAXIMUM_NUMBER_OF_PARAMETERS 4
+#define MAXIMUM_NUMBER_OF_PARAMETERS 5
 #define MAXIMUM_NAME_LENGHT 20
 
 typedef enum MessagesType {
@@ -42,7 +42,7 @@ TransferResult_t SendBuffer(const char* Buffer, int BytesToSend, SOCKET sd);
 TransferResult_t SendString(const char* Str, SOCKET sd);
 TransferResult_t ReceiveBuffer(char* OutputBuffer, int RemainingBytesToReceive, SOCKET sd);
 TransferResult_t ReceiveString(char** OutputStrPtr, SOCKET sd);
-Message GetRequest(SOCKET ServerSocket, char** Parameters);
+Message GetRequest(SOCKET ServerSocket);
 void SendRequest(SOCKET ServerSocket, char* MessageToSend);
 
 #endif

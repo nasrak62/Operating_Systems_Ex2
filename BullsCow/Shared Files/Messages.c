@@ -125,14 +125,14 @@ TransferResult_t ReceiveString(char** OutputStrPtr, SOCKET sd)
 int CountNumberOfParameters(char* ReceivedMessageString) {
 	int Count = 0;
 	for (int i = 0; i <strlen(ReceivedMessageString); i++) {
-		if (ReceivedMessageString[i] == ";") {
+		if (ReceivedMessageString[i] == ";" || ReceivedMessageString[i] == ":") {
 			Count++;
 		}
 	}
 	return Count;
 }
 
-Message GetRequest(SOCKET ServerSocket,char** Parameters) {
+Message GetRequest(SOCKET ServerSocket) {
 	TransferResult_t RecvRes;
 	char* ReceivedMessageString = NULL;
 	Message ReceivedMessage;
@@ -153,13 +153,15 @@ Message GetRequest(SOCKET ServerSocket,char** Parameters) {
 	{
 		printf("Got string : %s\n", ReceivedMessageString);
 		ReceivedMessage.NumberOfParameters = CountNumberOfParameters(ReceivedMessageString);
-		char* token=strtok(ReceivedMessageString, "\n");
-		ReceivedMessage.MessegeType = strtok(NULL, ":");
+		rsize_t strmax = strlen(ReceivedMessageString)+1;
+		char* next_token;
+		char* token = strtok_s(ReceivedMessageString, &strmax, "\n", &next_token);
+		ReceivedMessage.MessegeType = strtok_s(NULL, &strmax, ":", &next_token);
 		if (ReceivedMessage.NumberOfParameters > 0) {
 			for (int i = 0; i < ReceivedMessage.NumberOfParameters; i++) {
-				token = strtok(NULL, ";");
-				ReceivedMessage.Parameters[i] = (char*)malloc((strlen(token)+1)*sizeof(char));
-				strcpy(ReceivedMessage.Parameters[i],token);
+				token = strtok_s(NULL, &strmax, ";", &next_token);
+				ReceivedMessage.Parameters[i] = (char*)malloc((strlen(token)+1)*sizeof(char));//what if we gave memory all ready?
+				strcpy_s(ReceivedMessage.Parameters[i], ((strlen(token) + 1) * sizeof(char)), token);
 			}
 		}
 	}
