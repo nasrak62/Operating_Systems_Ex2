@@ -21,16 +21,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Shared Files\Messages.c">
       <Filter>Shared C Files</Filter>
+    </ClCompile>
+    <ClCompile Include="client_sendrecievefuncs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="client_threadfuncs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="client_main.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared Files\Messages.h">
       <Filter>Shared Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SendRecv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="deff_main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketSendRecvTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="client_main.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

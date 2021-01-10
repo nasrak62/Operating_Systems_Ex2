@@ -4,6 +4,9 @@
 #include <time.h>
 #define MAXIMUM_GAME_RESULT_LENGHT 60
 #define MAXIMUM_GAME_WIN_LENGHT 45
+#define SERVER_NO_OPPONENT_MASSAGE_LENGHT 30
+#define INSERT_NO_OPPONENT 8
+#define EMPTY_STRING ""
 
 void CheckThreadsStatus(PMYDATA THreadDataArguments, HANDLE** p_thread_handles, int NumberOfActiveThreadsForTheProgram) {
     DWORD wait_code;
@@ -69,7 +72,7 @@ void CheckThreadsStatus(PMYDATA THreadDataArguments, HANDLE** p_thread_handles, 
             printf("Error when waiting");
             return ERROR_CODE;
         }
-
+        closesocket(THreadDataArguments->ServerSocket);
         THreadDataArguments->InUse = false;
         (*(THreadDataArguments->NumberOfConnectedPlayers))--;
         (*(THreadDataArguments->PlayerOneFinishedWriting)) = false;
@@ -94,13 +97,14 @@ BOOL FileExists(LPCTSTR szPath)
         !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-bool CreateSocketBindItAndListen(int* Socket, struct sockaddr_in* Address, int PortNumber) {
+bool CreateSocketBindItAndListen(SOCKET* Socket, struct sockaddr_in* Address, int PortNumber) {
+    bool ShouldGracefullyClose = false;
     bool SocketProccess = true;
     int opt = NUMBER_TO_REUSE_ADDRESS;
     if (((*Socket) = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
     {
         printf("Error at socket( ): %ld\n", WSAGetLastError());
-       // goto server_cleanup_1;
+        goto GracefullyClose;
         SocketProccess = false;
     }
     if (setsockopt((*Socket), SOL_SOCKET, SO_REUSEADDR,
@@ -117,7 +121,8 @@ bool CreateSocketBindItAndListen(int* Socket, struct sockaddr_in* Address, int P
     {
         printf("The string \"%s\" cannot be converted into an ip address. ending program.\n",
             LOCAL_HOST);
-        //goto server_cleanup_2;
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
 
     if (bind((*Socket), (struct sockaddr*)Address, sizeof(*Address)) == SOCKET_ERROR)
@@ -131,17 +136,29 @@ bool CreateSocketBindItAndListen(int* Socket, struct sockaddr_in* Address, int P
         SocketProccess = false;
     }
     return SocketProccess;
+
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        closesocket((*Socket));
+    }
 }
 
 SOCKET AcceptConnection(SOCKET ServerSocket) {
+    bool ShouldGracefullyClose = false;
     SOCKET AcceptClientSocket;
     if ((AcceptClientSocket = accept(ServerSocket, NULL, NULL) == INVALID_SOCKET))
     {
         printf("Accepting connection with client failed, error %ld\n", WSAGetLastError());
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
 
     return AcceptClientSocket;
+
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        closesocket(ServerSocket);
+    }
 
 }
 
@@ -185,26 +202,28 @@ void AcceptChoice(PMYDATA ThreadpointerData, bool* ExitCommand, bool* GameFound)
     }
 }
 
-void ReadNumbersFromFile(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile, char** Line) {
+void ReadNumbersFromFile(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile, char** Line, int Length, int OffSetForPlayerOne, int OffSetForPlayerTwo) {
     DWORD wait_res_mutex;
+    bool ShouldGracefullyClose = false;
     BOOL release_res;
     DWORD dwBytesRead;
+    OVERLAPPED OverLappedRead = { 0 };
     wait_res_mutex = WaitForSingleObject(ThreadpointerData->FileReadMutex, TIMEOUT_IN_MILLISECONDS);
     if (wait_res_mutex != WAIT_OBJECT_0) {
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
     if (PlayerNumber == 2) {
+        OverLappedRead.Offset = OffSetForPlayerTwo;
         if (HandleFile == 0)
         {
             CloseHandle(HandleFile);
             HandleFile = CreateFile("GameScore.txt", GENERIC_READ | GENERIC_WRITE,
                 FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
         }
-        ReadFile(HandleFile, *Line, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING, &dwBytesRead, NULL);
     }
     else if (PlayerNumber == 1) {
-        OVERLAPPED OverLappedRead = { 0 };
-        OverLappedRead.Offset = MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING;
+        OverLappedRead.Offset = OffSetForPlayerOne;
         if (HandleFile == 0)
         {
             CloseHandle(HandleFile);
@@ -212,39 +231,44 @@ void ReadNumbersFromFile(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE Han
                 FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
         }
-        ReadFile(HandleFile, *Line, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING, &dwBytesRead, &OverLappedRead);//maybe strcpy?
     }
 
-
+    ReadFile(HandleFile, *Line, Length, &dwBytesRead, &OverLappedRead);//maybe strcpy?
     release_res = ReleaseMutex(ThreadpointerData->FileReadMutex);
     if (release_res == FALSE) {
         printf("Cant Relese Mutex\n");
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
 
-
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        CheckThreadsStatus(ThreadpointerData, (ThreadpointerData->ThreadHandle), 1);
+    }
 }
 
-void WriteToNumbersFile(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile,char* Line) {
+void WriteToNumbersFile(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile,char* Line, int Length,int OffSetForPlayerOne, int OffSetForPlayerTwo) {
     DWORD wait_res_mutex;
     BOOL release_res;
     DWORD dwBytesWritten;
+    bool ShouldGracefullyClose = false;
+    OVERLAPPED OverLappedWrite = { 0 };
     wait_res_mutex = WaitForSingleObject(ThreadpointerData->FileWriteMutex, TIMEOUT_IN_MILLISECONDS);
     if (wait_res_mutex != WAIT_OBJECT_0) {
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
     if (PlayerNumber == 1) {
+        OverLappedWrite.Offset = OffSetForPlayerOne;
         if (HandleFile == 0)
         {
             CloseHandle(HandleFile);
             HandleFile = CreateFile("GameScore.txt", GENERIC_READ | GENERIC_WRITE,
                 FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
         }
-        WriteFile(HandleFile, Line, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING, &dwBytesWritten, NULL);
     }
     else if (PlayerNumber == 2) {
-        OVERLAPPED OverLappedWrite = { 0 };
-        OverLappedWrite.Offset = MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING;
+        OverLappedWrite.Offset = OffSetForPlayerTwo;
         if (HandleFile == 0)
         {
             CloseHandle(HandleFile);
@@ -252,22 +276,30 @@ void WriteToNumbersFile(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE Hand
                 FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             
         }
-        WriteFile(HandleFile, Line, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING, &dwBytesWritten, &OverLappedWrite);
     }
-    
+    WriteFile(HandleFile, Line, Length, &dwBytesWritten, &OverLappedWrite);
 
     release_res = ReleaseMutex(ThreadpointerData->FileWriteMutex);
     if (release_res == FALSE) {
         printf("Cant Relese Mutex\n");
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
+    }
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        CheckThreadsStatus(ThreadpointerData, (ThreadpointerData->ThreadHandle), 1);
     }
 }
 
 void SetupTheGame(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile, Message ReceivedMessage) {
     DWORD wait_res_mutex;
     BOOL release_res;
+    bool ShouldGracefullyClose = false;
     strcpy_s(ThreadpointerData->NumberThatIChose, MAXIMUM_GUESS_LENGHT, ReceivedMessage.Parameters[0]);
-    WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile,ThreadpointerData->NumberThatIChose);
+    WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile,ThreadpointerData->NumberThatIChose, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING
+        ,0, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING);
+    //read opponent name
+    WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, EMPTY_STRING, SERVER_NO_OPPONENT_MASSAGE_LENGHT, INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
     if (PlayerNumber == 1) {
         (*(ThreadpointerData->PlayerOneFinishedWriting)) = true;
     }
@@ -276,18 +308,21 @@ void SetupTheGame(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile
     }
     wait_res_mutex = WaitForSingleObject(ThreadpointerData->FileReadMutex, TIMEOUT_IN_MILLISECONDS);
     if (wait_res_mutex != WAIT_OBJECT_0) {
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
     while (!((*(ThreadpointerData->PlayerOneFinishedWriting)) && (*(ThreadpointerData->PlayerTwoFinishedWriting)))) {
         if ((*(ThreadpointerData->PlayerOneFinishedWriting)) && (*(ThreadpointerData->PlayerTwoFinishedWriting))) {
             release_res = ReleaseMutex(ThreadpointerData->FileReadMutex);
             if (release_res == FALSE) {
                 printf("Cant Relese Mutex\n");
-                //goto
+                ShouldGracefullyClose = true;
+                goto GracefullyClose;
             }
         }
     }
-    ReadNumbersFromFile(ThreadpointerData, PlayerNumber, HandleFile, &(ThreadpointerData->NumberThatOtherChose));
+    ReadNumbersFromFile(ThreadpointerData, PlayerNumber, HandleFile, &(ThreadpointerData->NumberThatOtherChose), MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING
+        , MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING,0);
     SendRequest(ThreadpointerData->ServerSocket, "SERVER_PLAYER_MOVE_REQUEST\n");
     if (PlayerNumber == 1) {
         (*ThreadpointerData->PlayerTwoFinishedWriting) = false;
@@ -296,6 +331,10 @@ void SetupTheGame(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile
         (*(ThreadpointerData->PlayerTwoFinishedWriting)) = false;
     }
     //free NumberThatOtherChose
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        CheckThreadsStatus(ThreadpointerData, (ThreadpointerData->ThreadHandle), 1);
+    }
 
 }
 void CalculateNumberOfBullsAndCows(char* Guess, char* OriginalNumber, int* NumberOfBulls, int* NumberOfCows) {
@@ -376,9 +415,11 @@ void PlayTheGameAndProccessGuess(PMYDATA ThreadpointerData, int PlayerNumber, HA
     BOOL release_res;
     bool PlayerOneIsTheWinner = false;
     bool PlayerTwoIsTheWinner = false;
+    bool ShouldGracefullyClose = false;
 
     strcpy_s(ThreadpointerData->MyGuess, MAXIMUM_GUESS_LENGHT, ReceivedMessage.Parameters[0]);
-    WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, ThreadpointerData->MyGuess);
+    WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, ThreadpointerData->MyGuess, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING
+        , 0, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING);
     if (PlayerNumber == 1) {
         (*(ThreadpointerData->PlayerOneFinishedWriting)) = true;
     }
@@ -387,18 +428,20 @@ void PlayTheGameAndProccessGuess(PMYDATA ThreadpointerData, int PlayerNumber, HA
     }
     wait_res_mutex = WaitForSingleObject(ThreadpointerData->FileReadMutex, TIMEOUT_IN_MILLISECONDS);
     if (wait_res_mutex != WAIT_OBJECT_0) {
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
     while (!((*(ThreadpointerData->PlayerOneFinishedWriting)) && (*(ThreadpointerData->PlayerTwoFinishedWriting)))) {
         if ((*(ThreadpointerData->PlayerOneFinishedWriting)) && (*(ThreadpointerData->PlayerTwoFinishedWriting))) {
             release_res = ReleaseMutex(ThreadpointerData->FileReadMutex);
             if (release_res == FALSE) {
                 printf("Cant Relese Mutex\n");
-                //goto
+                ShouldGracefullyClose = true;
+                goto GracefullyClose;
             }
         }
     }
-    ReadNumbersFromFile(ThreadpointerData, PlayerNumber, HandleFile, &(ThreadpointerData->OtherGuess));
+    ReadNumbersFromFile(ThreadpointerData, PlayerNumber, HandleFile, &(ThreadpointerData->OtherGuess), MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING,0);
     GameResults = CalculateScore(PlayerNumber,&PlayerOneIsTheWinner, &PlayerTwoIsTheWinner, ThreadpointerData->MyGuess, ThreadpointerData->OtherGuess,
         ThreadpointerData->NumberThatIChose, ThreadpointerData->NumberThatOtherChose, (*(ThreadpointerData->PlayerOneName)), (*(ThreadpointerData->PlayerTwoName)));
     SendRequest(ThreadpointerData->ServerSocket, GameResults);
@@ -426,8 +469,24 @@ void PlayTheGameAndProccessGuess(PMYDATA ThreadpointerData, int PlayerNumber, HA
             (*(ThreadpointerData->PlayerTwoFinishedWriting)) = false;
         }
     }
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        CheckThreadsStatus(ThreadpointerData, (ThreadpointerData->ThreadHandle), 1);
+    }
+    
 
 }
+
+void CheckIfOpponentQuit(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile, bool* OpponnetnQuit) {
+    char* Line;
+    ReadNumbersFromFile(ThreadpointerData, PlayerNumber, HandleFile, &Line, SERVER_NO_OPPONENT_MASSAGE_LENGHT, INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
+    if (STRINGS_ARE_EQUAL(Line, "SERVER_NO_OPPONENTS"))
+    {
+        *OpponnetnQuit = true;
+
+    }
+}
+
 
 void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bool* ExitCommand) {
     Message ReceivedMessage;
@@ -442,7 +501,13 @@ void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bo
     {
         SetupTheGame(ThreadpointerData, PlayerNumber, HandleFile, ReceivedMessage);
         while (!WeHaveAWinner && !OpponnetnQuit) {
-            //check from file if opponent has quit
+
+            CheckIfOpponentQuit(ThreadpointerData, PlayerNumber, HandleFile, &OpponnetnQuit);
+            if (OpponnetnQuit) {
+                SendRequest(ThreadpointerData->ServerSocket, "SERVER_OPPONENT_QUIT\n");
+                SendRequest(ThreadpointerData->ServerSocket, "SERVER_MAIN_MENU\n");
+                WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, EMPTY_STRING, SERVER_NO_OPPONENT_MASSAGE_LENGHT, INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
+            }
             ReceivedMessage = GetRequest(ThreadpointerData->ServerSocket);
             if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "CLIENT_PLAYER_MOVE"))
             {
@@ -450,12 +515,9 @@ void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bo
 
             }
             else if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "CLIENT_DISCONNECT")) {
-                //write file server no opponent
+                WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, "SERVER_NO_OPPONENTS", SERVER_NO_OPPONENT_MASSAGE_LENGHT
+                    , INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
                 ExitCommand = true;
-            }
-            if (OpponnetnQuit) {
-                SendRequest(ThreadpointerData->ServerSocket, "SERVER_OPPONENT_QUIT\n");
-                SendRequest(ThreadpointerData->ServerSocket, "SERVER_MAIN_MENU\n");
             }
         }
     }
@@ -470,9 +532,11 @@ void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bo
 void CheckGameFile(PMYDATA ThreadpointerData, bool* ExitCommand) {
     DWORD wait_res_mutex;
     BOOL release_res;
+    bool ShouldGracefullyClose = false;
     wait_res_mutex = WaitForSingleObject(ThreadpointerData->FileWriteMutex, TIMEOUT_IN_MILLISECONDS);
     if (wait_res_mutex != WAIT_OBJECT_0) {
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
     }
     if (!FileExists("GameScore.txt")) {
         HANDLE HandleFile = CreateFile("GameScore.txt", GENERIC_READ | GENERIC_WRITE,
@@ -480,7 +544,8 @@ void CheckGameFile(PMYDATA ThreadpointerData, bool* ExitCommand) {
         release_res = ReleaseMutex(ThreadpointerData->FileWriteMutex);
         if (release_res == FALSE) {
             printf("Cant Relese Mutex\n");
-            //goto
+            ShouldGracefullyClose = true;
+            goto GracefullyClose;
         }
         int PlayerNumber = 1;
         strcpy_s((*(ThreadpointerData->PlayerOneName)), MAXIMUM_NAME_LENGHT, ThreadpointerData->ClientName);
@@ -488,16 +553,19 @@ void CheckGameFile(PMYDATA ThreadpointerData, bool* ExitCommand) {
         CloseHandle(HandleFile);
         wait_res_mutex = WaitForSingleObject(ThreadpointerData->FileWriteMutex, TIMEOUT_IN_MILLISECONDS);
         if (wait_res_mutex != WAIT_OBJECT_0) {
-            //goto
+            ShouldGracefullyClose = true;
+            goto GracefullyClose;
         }
         if (remove("GameScore.txt") != 0) {
             printf("Unable to delete the file");
-            //goto
+            ShouldGracefullyClose = true;
+            goto GracefullyClose;
         }
         release_res = ReleaseMutex(ThreadpointerData->FileWriteMutex);
         if (release_res == FALSE) {
             printf("Cant Relese Mutex\n");
-            //goto
+            ShouldGracefullyClose = true;
+            goto GracefullyClose;
         }
         
     }
@@ -508,12 +576,18 @@ void CheckGameFile(PMYDATA ThreadpointerData, bool* ExitCommand) {
         release_res = ReleaseMutex(ThreadpointerData->FileWriteMutex);
         if (release_res == FALSE) {
             printf("Cant Relese Mutex\n");
-            //goto
+            ShouldGracefullyClose = true;
+            goto GracefullyClose;
         }
         int PlayerNumber = 2;
         strcpy_s((*(ThreadpointerData->PlayerTwoName)), MAXIMUM_NAME_LENGHT, ThreadpointerData->ClientName);
         StartGame(ThreadpointerData, PlayerNumber, HandleFile, ExitCommand);
         CloseHandle(HandleFile);
+    }
+
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        CheckThreadsStatus(ThreadpointerData, (ThreadpointerData->ThreadHandle), 1);
     }
 
 }
@@ -556,7 +630,6 @@ DWORD WINAPI HandleClient(LPVOID lpParam)
     }
     if (ExitCommand) {
 
-        closesocket(ThreadpointerData->ServerSocket);
         free(ReceivedMessage.MessegeType);
         CheckThreadsStatus(ThreadpointerData, (ThreadpointerData->ThreadHandle), 1);
         
@@ -578,7 +651,6 @@ DWORD WINAPI DenieClient(LPVOID lpParam)
     PMYDATA ThreadpointerData;
     ThreadpointerData = (PMYDATA)lpParam;
     SendRequest(ThreadpointerData->ServerSocket, "SERVER_DENIED\n");
-    closesocket(ThreadpointerData->ServerSocket);
     CheckThreadsStatus(ThreadpointerData, (ThreadpointerData->ThreadHandle), 1);
 }
 
@@ -599,7 +671,7 @@ void HandleCommuniction(int PortNumber) {
     SOCKET ServerSocket;
     struct sockaddr_in AddressForServerSocket;
     bool ExitCommand = false;
-   
+    bool ShouldGracefullyClose = false;
     int CurrentThreadNumber=0;
     int NumberOfPlayersThatWantToPlay = 0;
     int NumberOfConnectedPlayers = 0;
@@ -620,7 +692,11 @@ void HandleCommuniction(int PortNumber) {
         if (p_thread_handles == NULL || p_thread_ids == NULL
             || ThreadpointerDataArray == NULL || FileWriteMutex == NULL || FileReadMutex == NULL) {
             printf("Malloc Or Mutex Failed\n");
-            //goto
+            HeapFree(GetProcessHeap(), NULL, ThreadpointerDataArray);
+            HeapFree(GetProcessHeap(), NULL, p_thread_handles);
+            HeapFree(GetProcessHeap(), NULL, p_thread_ids);
+            ShouldGracefullyClose = true;
+            goto GracefullyClose;
 
         }
         else {
@@ -672,6 +748,11 @@ void HandleCommuniction(int PortNumber) {
     }
     else {
         printf("Cant Finish Socket Creation\n");
-        //goto
+        ShouldGracefullyClose = true;
+        goto GracefullyClose;
+    }
+GracefullyClose:
+    if (ShouldGracefullyClose) {
+        closesocket(ServerSocket);
     }
 }
