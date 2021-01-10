@@ -6,7 +6,11 @@
 #define MAXIMUM_GAME_WIN_LENGHT 45
 #define SERVER_NO_OPPONENT_MASSAGE_LENGHT 30
 #define INSERT_NO_OPPONENT 8
-#define EMPTY_STRING ""
+#define EMPTY_STRING " ERVER_NO_OPPONENTS"
+#define INSERT_NAMES_START_OFFSET_PLAYER_ONE 28
+#define INSERT_NAMES_START_OFFSET_PLAYER_TWO 48
+
+
 
 void CheckThreadsStatus(PMYDATA THreadDataArguments, HANDLE** p_thread_handles, int NumberOfActiveThreadsForTheProgram) {
     DWORD wait_code;
@@ -291,14 +295,32 @@ GracefullyClose:
     }
 }
 
+char* PaddNameWithSpace(ClientName) {
+    char* PaddedClientName[MAXIMUM_NAME_LENGHT];
+    strcpy_s(PaddedClientName, MAXIMUM_NAME_LENGHT, ClientName);
+    while (strlen(PaddedClientName)< MAXIMUM_NAME_LENGHT-1) {
+        sprintf_s(PaddedClientName, MAXIMUM_NAME_LENGHT, "\t");
+    }
+    return PaddedClientName;
+}
+
+
+
 void SetupTheGame(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile, Message ReceivedMessage) {
     DWORD wait_res_mutex;
     BOOL release_res;
+    char* PaddedOpponentName;
+    char* PaddedClientName;
     bool ShouldGracefullyClose = false;
+    rsize_t strmax = MAXIMUM_NAME_LENGHT;
+    char* next_token;
+
     strcpy_s(ThreadpointerData->NumberThatIChose, MAXIMUM_GUESS_LENGHT, ReceivedMessage.Parameters[0]);
     WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile,ThreadpointerData->NumberThatIChose, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING
         ,0, MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING);
-    //read opponent name
+    PaddedClientName=PaddNameWithSpace(ThreadpointerData->ClientName);
+    WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, PaddedClientName, MAXIMUM_NAME_LENGHT
+        , INSERT_NAMES_START_OFFSET_PLAYER_ONE, INSERT_NAMES_START_OFFSET_PLAYER_TWO);
     WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, EMPTY_STRING, SERVER_NO_OPPONENT_MASSAGE_LENGHT, INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
     if (PlayerNumber == 1) {
         (*(ThreadpointerData->PlayerOneFinishedWriting)) = true;
@@ -323,6 +345,10 @@ void SetupTheGame(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile
     }
     ReadNumbersFromFile(ThreadpointerData, PlayerNumber, HandleFile, &(ThreadpointerData->NumberThatOtherChose), MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING
         , MAXIMUM_GUESS_LENGHT_WITH_OUT_END_STRING,0);
+    ReadNumbersFromFile(ThreadpointerData, PlayerNumber, HandleFile, &PaddedOpponentName, MAXIMUM_NAME_LENGHT
+        , INSERT_NAMES_START_OFFSET_PLAYER_TWO, INSERT_NAMES_START_OFFSET_PLAYER_ONE);
+    char* token = strtok_s(PaddedOpponentName, &strmax, "\t", &next_token);
+    strcpy_s(ThreadpointerData->OpponentName, ((strlen(token) + 1) * sizeof(char)), token);
     SendRequest(ThreadpointerData->ServerSocket, "SERVER_PLAYER_MOVE_REQUEST\n");
     if (PlayerNumber == 1) {
         (*ThreadpointerData->PlayerTwoFinishedWriting) = false;
