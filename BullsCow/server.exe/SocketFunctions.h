@@ -29,7 +29,6 @@
 
 typedef struct MyData {
     int ThreadNumber;
-   // char NumberThatIChose[MAXIMUM_GUESS_LENGHT];
     char* NumberThatIChose;
     char* NumberThatOtherChose;
     char* MyGuess;

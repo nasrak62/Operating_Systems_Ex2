@@ -31,7 +31,7 @@ TransferResult_t SendString(const char* Str, SOCKET sd)
 {
 	int TotalStringSizeInBytes;
 	TransferResult_t SendRes;
-
+	printf("We Send %s\n", Str);
 
 	TotalStringSizeInBytes = (int)(strlen(Str) + 1); // terminating zero also sent	
 
@@ -109,7 +109,7 @@ TransferResult_t ReceiveString(char** OutputStrPtr, SOCKET sd)
 		(char*)(StrBuffer),
 		(int)(TotalStringSizeInBytes),
 		sd);
-
+	printf("We Recv %s\n", StrBuffer);
 	if (RecvRes == TRNS_SUCCEEDED)
 	{
 		*OutputStrPtr = StrBuffer;
@@ -165,10 +165,6 @@ Message GetRequest(SOCKET ServerSocket) {
 			}
 		}
 	}
-	
-	
-	
-	//free(ReceivedMessageString);
 	return(*ReceivedMessage);
 
 }
@@ -180,7 +176,7 @@ void SendRequest(SOCKET ServerSocket,char* MessageToSend) {
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(ServerSocket);
+		//closesocket(ServerSocket);
 	}
 
 }

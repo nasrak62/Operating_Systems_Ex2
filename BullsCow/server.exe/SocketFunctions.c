@@ -70,12 +70,18 @@ void CheckThreadsStatus(PMYDATA THreadDataArguments, HANDLE** p_thread_handles, 
             (*(THreadDataArguments->PlayerOneFinishedReadingInPlay)) = false;
             (*(THreadDataArguments->PlayerTwoFinishedReadingInPlay)) = false;
 
+            (*(THreadDataArguments->PlayerTwoFileInUse)) = false;
+            (*(THreadDataArguments->PlayerOneFileInUse)) = false;
+
             if (THreadDataArguments->PlayerNumber == 1) {
                 (*(THreadDataArguments->PlayerOneIsStillConnected)) = false;
+                
             }
             if (THreadDataArguments->PlayerNumber == 2) {
                 (*(THreadDataArguments->PlayerTwoIsStillConnected)) = false;
             }
+            ReleaseMutex(THreadDataArguments->FileWriteMutex);
+            ReleaseMutex(THreadDataArguments->FileReadMutex);
 
             if (FileExists("GameScore.txt")) {
                 remove("GameScore.txt");
@@ -198,6 +204,10 @@ void AcceptChoice(PMYDATA ThreadpointerData, bool* ExitCommand, bool* GameFound)
     }
     else if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "CLIENT_DISCONNECT")) {  
         printf("bye For %s\n", ThreadpointerData->ClientName);
+        *ExitCommand = true;
+    }
+    else if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "SERVER_OPPONENT_QUIT")) {
+        printf("ops\n");
         *ExitCommand = true;
     }
 }
@@ -429,7 +439,7 @@ void SetupTheGame(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE HandleFile
         ThreadpointerData->PlayerOneName = ThreadpointerData->OpponentName;
         ThreadpointerData->PlayerTwoName = ThreadpointerData->ClientName;
     }
-    //free NumberThatOtherChose and padded client name and padded opponent
+    free(PaddedOpponentName);
 
 GracefullyClose:
     if (ShouldGracefullyClose) {
@@ -683,6 +693,7 @@ void PlayTheGameAndProccessGuess(PMYDATA ThreadpointerData, int PlayerNumber, HA
         return;
     }
     SendRequest(ThreadpointerData->ServerSocket, GameResults);
+   
     if ((PlayerOneIsTheWinner) && (PlayerTwoIsTheWinner)) {
         *WeHaveAWinner = true;
         SendRequest(ThreadpointerData->ServerSocket, "SERVER_DRAW\n");
@@ -692,6 +703,7 @@ void PlayTheGameAndProccessGuess(PMYDATA ThreadpointerData, int PlayerNumber, HA
         *WeHaveAWinner = true;
         WinResults = MakeGameWinString(ThreadpointerData->NumberThatOtherChose, ((ThreadpointerData->PlayerTwoName)));
         SendRequest(ThreadpointerData->ServerSocket, WinResults);
+        
        
     }
     else if ((PlayerOneIsTheWinner) && (!PlayerTwoIsTheWinner)) {
@@ -703,6 +715,7 @@ void PlayTheGameAndProccessGuess(PMYDATA ThreadpointerData, int PlayerNumber, HA
     else {
         *WeHaveAWinner = false;
         SendRequest(ThreadpointerData->ServerSocket, "SERVER_PLAYER_MOVE_REQUEST\n");
+        free(GameResults);
     }
     if (PlayerNumber == 1) {
         (*(ThreadpointerData->PlayerOneFinishedWritingInPlay)) = false;
@@ -731,7 +744,7 @@ void CheckIfOpponentQuit(PMYDATA ThreadpointerData, int PlayerNumber, HANDLE Han
         *OpponnetnQuit = true;
 
     }
-    //free line
+    free(Line);
 }
 
 //Remove Game File
@@ -769,6 +782,7 @@ void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bo
     if ((!OpponnetnQuit) ) {
         if (STRINGS_ARE_EQUAL(ReceivedMessage->MessegeType, "CLIENT_SETUP"))//wait? if wrong massage?
         {
+            printf("in client setup\n");
             IsOpponentStillConnected(ThreadpointerData, &OpponnetnQuit);
             SetupTheGame(ThreadpointerData, PlayerNumber, HandleFile, *ReceivedMessage, &OpponnetnQuit);
             IsOpponentStillConnected(ThreadpointerData, &OpponnetnQuit);
@@ -804,6 +818,7 @@ void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bo
                             WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, "SERVER_NO_OPPONENTS", SERVER_NO_OPPONENT_MASSAGE_LENGHT
                                 , INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
                             *ExitCommand = true;
+                            free(ReceivedMessage);
                             return;
                         }
                     }
@@ -812,7 +827,9 @@ void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bo
                         SendRequest(ThreadpointerData->ServerSocket, "SERVER_MAIN_MENU\n");
                         WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, "SERVER_NO_OPPONENTS", SERVER_NO_OPPONENT_MASSAGE_LENGHT
                             , INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
+                        //OpponnetnQuit = true;
                         *ExitCommand = true;
+                        free(ReceivedMessage);
                         return;
                     }
                    
@@ -836,7 +853,9 @@ void StartGame(PMYDATA ThreadpointerData,int PlayerNumber, HANDLE HandleFile, bo
             SendRequest(ThreadpointerData->ServerSocket, "SERVER_MAIN_MENU\n");
             WriteToNumbersFile(ThreadpointerData, PlayerNumber, HandleFile, "SERVER_NO_OPPONENTS", SERVER_NO_OPPONENT_MASSAGE_LENGHT
                 , INSERT_NO_OPPONENT, INSERT_NO_OPPONENT);
+           // OpponnetnQuit = true;
             *ExitCommand = true;
+            free(ReceivedMessage);
             return;
         }
         ///free massage
@@ -965,6 +984,9 @@ DWORD WINAPI HandleClient(LPVOID lpParam)
             else if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "CLIENT_DISCONNECT")) {  
                 ExitCommand = true;
             }  
+            else if (STRINGS_ARE_EQUAL(ReceivedMessage.MessegeType, "SERVER_OPPONENT_QUIT")) {
+                printf("ops\n");
+            }
         }
         AcceptChoice(ThreadpointerData, &ExitCommand, &GameFound);
         if (GameFound) {
@@ -1050,8 +1072,13 @@ void HandleCommuniction(int PortNumber) {
     bool PlayerTwoIsStillConnected = false;
 
 
-    char* PlayerOneName=(char*)malloc(MAXIMUM_NAME_LENGHT * sizeof(char));//free
-    char* PlayerTwoName = (char*)malloc(MAXIMUM_NAME_LENGHT * sizeof(char));//free
+    char* PlayerOneName=(char*)malloc(MAXIMUM_NAME_LENGHT * sizeof(char));
+    char* PlayerTwoName = (char*)malloc(MAXIMUM_NAME_LENGHT * sizeof(char));
+
+    if (FileExists("GameScore.txt")) {
+        remove("GameScore.txt");
+        remove("../GameScore.txt");
+    }
     
     if (CreateSocketBindItAndListen(&ServerSocket,&AddressForServerSocket,PortNumber)) {
         ioctlsocket(ServerSocket, FIONBIO, &Mode);
@@ -1092,7 +1119,9 @@ void HandleCommuniction(int PortNumber) {
                             printf("Waiting for a client to connect...\n");
                             printf("Waiting For New Client to Accept Socket\n");
                         }
+                       
                     }
+
                     if (!ExitCommand) {
                         printf("Client %d Connected.\n", CurrentThreadNumber);
                         ThreadpointerDataArray[CurrentThreadNumber].InUse = true;
@@ -1139,6 +1168,8 @@ void HandleCommuniction(int PortNumber) {
             HeapFree(GetProcessHeap(), NULL, ThreadpointerDataArray);
             HeapFree(GetProcessHeap(), NULL, p_thread_handles);
             HeapFree(GetProcessHeap(), NULL, p_thread_ids);
+            free(PlayerTwoName);
+            free(PlayerOneName);
         }
     }
     else {

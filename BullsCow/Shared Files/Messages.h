@@ -27,7 +27,6 @@ typedef enum MessagesType {
 
 typedef struct{
 	char *Parameters[MAXIMUM_NUMBER_OF_PARAMETERS];
-	//MessagesType MessegeType;
 	char* MessegeType;
 	int NumberOfParameters;
 }Message;
