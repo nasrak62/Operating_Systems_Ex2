@@ -125,7 +125,7 @@ TransferResult_t ReceiveString(char** OutputStrPtr, SOCKET sd)
 int CountNumberOfParameters(char* ReceivedMessageString) {
 	int Count = 0;
 	for (int i = 0; i <strlen(ReceivedMessageString); i++) {
-		if (ReceivedMessageString[i] == ";" || ReceivedMessageString[i] == ":") {
+		if ((ReceivedMessageString[i] == ';') || (ReceivedMessageString[i] == ':')) {
 			Count++;
 		}
 	}
@@ -135,41 +135,41 @@ int CountNumberOfParameters(char* ReceivedMessageString) {
 Message GetRequest(SOCKET ServerSocket) {
 	TransferResult_t RecvRes;
 	char* ReceivedMessageString = NULL;
-	Message ReceivedMessage;
-
+	Message* ReceivedMessage;
+	ReceivedMessage =(Message*) malloc(sizeof(Message));
 	RecvRes = ReceiveString(&ReceivedMessageString, ServerSocket);
 
 	if (RecvRes == TRNS_FAILED)
 	{
-		printf("Service socket error while reading, closing thread.\n");
-		closesocket(ServerSocket);
+		printf("RecvRes == TRNS_FAILED\n");
+		ReceivedMessage->NumberOfParameters = 0;
+		ReceivedMessage->MessegeType = "SERVER_OPPONENT_QUIT";
 	}
 	else if (RecvRes == TRNS_DISCONNECTED)
 	{
-		printf("Connection closed while reading, closing thread.\n");
-		closesocket(ServerSocket);
+		printf("RecvRes == TRNS_DISCONNECTED\n");
+		ReceivedMessage->NumberOfParameters = 0;
+		ReceivedMessage->MessegeType = "SERVER_OPPONENT_QUIT";
 	}
 	else
 	{
-		printf("Got string : %s\n", ReceivedMessageString);
-		ReceivedMessage.NumberOfParameters = CountNumberOfParameters(ReceivedMessageString);
-		rsize_t strmax = strlen(ReceivedMessageString)+1;
-		char* next_token;
-		char* token = strtok_s(ReceivedMessageString, &strmax, "\n", &next_token);
-		ReceivedMessage.MessegeType = strtok_s(NULL, &strmax, ":", &next_token);
-		if (ReceivedMessage.NumberOfParameters > 0) {
-			for (int i = 0; i < ReceivedMessage.NumberOfParameters; i++) {
-				token = strtok_s(NULL, &strmax, ";", &next_token);
-				ReceivedMessage.Parameters[i] = (char*)malloc((strlen(token)+1)*sizeof(char));//what if we gave memory all ready?
-				strcpy_s(ReceivedMessage.Parameters[i], ((strlen(token) + 1) * sizeof(char)), token);
+		ReceivedMessage->NumberOfParameters = CountNumberOfParameters(ReceivedMessageString);
+		char* next_token = NULL;
+		char* token = NULL;
+		token = strtok_s(ReceivedMessageString, "\n", &next_token);
+		ReceivedMessage->MessegeType = strtok_s(token, ":", &next_token);
+		if (ReceivedMessage->NumberOfParameters > 0) {
+			for (int i = 0; i < ReceivedMessage->NumberOfParameters; i++) {
+				ReceivedMessage->Parameters[i] = strtok_s(NULL, ";", &next_token);
+
 			}
 		}
 	}
 	
 	
-
+	
 	//free(ReceivedMessageString);
-	return(ReceivedMessage);
+	return(*ReceivedMessage);
 
 }
 

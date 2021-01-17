@@ -1,7 +1,8 @@
 /* File Header: Comments:
 * Authors- Saar Zaidfunden -205892334, Jonathan Johansson-308034107
-* Project- IOS_EX4 -
-Description- 
+* Project- IOS_EX4 - Server Client Bulls And Cows Game
+Description-  Creating And Closing The Socket Ground Work
+EX4_205892334_308034107
 */
 
 #include "SocketFunctions.h"

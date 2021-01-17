@@ -1,7 +1,7 @@
 //*Description: this file includes most of send/recieve functions of the clients which contains additional implementations that are unique only for clients
 
 #include "deff_main.h"
-#include "SocketSendRecvTools.h"
+#include "Messages.h"
 #include "client_main.h"
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -21,83 +21,6 @@ char* chop(char* str)
 		str[len - 1] = '\0';
 	}
 	return str;
-}
-
-
-TransferResult_t SendBuffer(const char* Buffer, int BytesToSend, SOCKET sd)
-{
-	const char* CurPlacePtr = Buffer;
-	int BytesTransferred;
-	int RemainingBytesToSend = BytesToSend;
-
-	while (RemainingBytesToSend > 0)
-	{
-		/* send does not guarantee that the entire message is sent */
-		BytesTransferred = send(sd, CurPlacePtr, RemainingBytesToSend, 0);
-		if (BytesTransferred == SOCKET_ERROR)
-		{
-			printf("send() failed, error %d\n", WSAGetLastError());
-			return TRNS_FAILED;
-		}
-
-		RemainingBytesToSend -= BytesTransferred;
-		CurPlacePtr += BytesTransferred; // <ISP> pointer arithmetic
-	}
-
-	return TRNS_SUCCEEDED;
-}
-
-
-TransferResult_t SendString(const char* Str, SOCKET sd)
-{
-	/* Send the the request to the server on socket sd */
-	int TotalStringSizeInBytes;
-	TransferResult_t SendRes;
-
-	/* The request is sent in two parts. First the Length of the string (stored in
-	   an int variable ), then the string itself. */
-
-	TotalStringSizeInBytes = (int)(strlen(Str) + 1); // terminating zero also sent	
-
-	SendRes = SendBuffer(
-		(const char*)(&TotalStringSizeInBytes),
-		(int)(sizeof(TotalStringSizeInBytes)), // sizeof(int) 
-		sd);
-
-	if (SendRes != TRNS_SUCCEEDED) return SendRes;
-
-	SendRes = SendBuffer(
-		(const char*)(Str),
-		(int)(TotalStringSizeInBytes),
-		sd);
-
-	return SendRes;
-}
-
-
-TransferResult_t ReceiveBuffer(char* OutputBuffer, int BytesToReceive, SOCKET sd)
-{
-	char* CurPlacePtr = OutputBuffer;
-	int BytesJustTransferred;
-	int RemainingBytesToReceive = BytesToReceive;
-
-	while (RemainingBytesToReceive > 0)
-	{
-		/* send does not guarantee that the entire message is sent */
-		BytesJustTransferred = recv(sd, CurPlacePtr, RemainingBytesToReceive, 0);
-		if (BytesJustTransferred == SOCKET_ERROR)
-		{
-			printf("recv() failed, error %d\n", WSAGetLastError());
-			return TRNS_FAILED;
-		}
-		else if (BytesJustTransferred == 0)
-			return TRNS_DISCONNECTED; // recv() returns zero if connection was gracefully disconnected.
-
-		RemainingBytesToReceive -= BytesJustTransferred;
-		CurPlacePtr += BytesJustTransferred; // <ISP> pointer arithmetic
-	}
-
-	return TRNS_SUCCEEDED;
 }
 
 
@@ -156,16 +79,18 @@ inputs - message type
 returns: number of parameters of specific message type*/
 int param_type(char* Type)
 {
-	if ((strcmp(Type, "SERVER_MAIN_MENU") == 0) || (strcmp(Type, "SERVER_APPROVED") == 0) || (strcmp(Type, "SERVER_SETUP_REQUEST") == 0) || (strcmp(Type, "SERVER_PLAYER_MOVE_REQUEST") == 0) || (strcmp(Type, "SERVER_GAME_OVER_MENU") == 0) || (strcmp(Type, "SERVER_NO_OPPONENT") == 0))
+	if ((strcmp(Type, "SERVER_MAIN_MENU") == 0) || (strcmp(Type, "SERVER_APPROVED") == 0) || (strcmp(Type, "SERVER_SETUP_REQUEST") == 0) || (strcmp(Type, "SERVER_PLAYER_MOVE_REQUEST") == 0) || (strcmp(Type, "SERVER_GAME_OVER_MENU") == 0) || (strcmp(Type, "SERVER_DRAW") == 0) || (strcmp(Type, "SERVER_DENIED") == 0) || (strcmp(Type, "SERVER_NO_OPPONENTS") == 0))
 	{
 		return 0;
 	}
-	else if ((strcmp(Type, "SERVER_DENIED") == 0) || (strcmp(Type, "SERVER_INVITE") == 0) || (strcmp(Type, "SERVER_OPPONENT_QUIT") == 0))
+	else if ( (strcmp(Type, "SERVER_INVITE") == 0) || (strcmp(Type, "SERVER_OPPONENT_QUIT") == 0))
 	{
 		return 1;
 	}
 	else if ((strcmp(Type, "SERVER_GAME_RESULTS") == 0))
 		return 4;
+	else if ((strcmp(Type, "SERVER_WIN") == 0))
+		return 2;
 	else
 		printf("Message type is not valid\n");
 	return -1;
@@ -235,6 +160,11 @@ char* send_message_client(char* type, char* player_move, char* username)
 	{
 		Param[0] = player_move;
 		message_to_send_to_server = create_message_to_send("PLAYER_MOVE", Param, 1);
+	}
+	else if (strcmp(type, "SETUP") == 0)
+	{
+		Param[0] = player_move;
+		message_to_send_to_server = create_message_to_send("SETUP", Param, 1);
 	}
 	else if (strcmp(type, "REPLAY") == 0)
 		message_to_send_to_server = create_message_to_send("REPLAY", NULL, 0);

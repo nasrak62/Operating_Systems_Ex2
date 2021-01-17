@@ -1,11 +1,12 @@
 #include "deff_main.h"
-#include "SocketSendRecvTools.h"
+#include "Messages.h"
 #include "client_main.h"
 #include <time.h>
 #include <winsock2.h>
 #include <sys/types.h>
 
 //#define WAIT 10000 
+
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -20,42 +21,12 @@ MessSplit* mess_struct = NULL;
 char* setup_choice()
 {
 
-	char user_input_string[20] = { NULL };
+	char user_input_string[5] = { NULL };
 	int valid_input = 0, retval = 0;
 	char* message_to_send = { NULL };
-	while (valid_input == 0)
-	{
-		printf("Choose your own 4 digits sequence (without repeated digit!):\n");
-		scanf("%s", user_input_string);
-		int num = 0;
-		num = atoi(user_input_string);
-		int k, temp, frequency[9], flag = 0, i;
-		for (i = 0; i < 10; i++)
-		{
-			frequency[i] = 0;
-		}
-		while (num > 0)
-		{
-			k = num % 10;
-			frequency[k]++;
-			num /= 10;
-		}
-		for (i = 0; i < 10; i++)
-		{
-			if (frequency[i] > 1)
-			{
-				flag = 1;
-			}
-		}
-		if ((flag == 0) && len((user_input_string == 4) && isdigit(user_input_string) == 1))
-		{
-			valid_input = 1;
-		}
-		else
-			printf("Invalid input.\nPlease type again your input and make sure it is valid!\n");
-		if (valid_input == 1)
-			message_to_send = send_message_client("SETUP", user_input_string, NULL);
-	}
+	printf("Choose your 4 digits:\n");
+	scanf("%s", user_input_string);
+	message_to_send = send_message_client("SETUP", user_input_string, NULL);
 	return message_to_send;
 }
 /* move_player_choice
@@ -63,24 +34,12 @@ description – handling move of player
 inputs - none
 returns: string to send*/
 char* move_player_choice() {
-
-	char user_input_string[20] = { NULL };
+	char user_input_string[5];
 	int valid_input = 0, retval = 0;
-	char* message_to_send = { NULL };
-	while (valid_input == 0)
-	{
-		printf("Choose a sequence of 4 digits sequence to guess:\n");
-		scanf("%s", user_input_string);
-		if (len((user_input_string == 4) && isdigit(user_input_string) == 1))
-		{
-			valid_input = 1;
-		}
-		else
-			printf("Invalid input.\nPlease type again your input and make sure it is valid!\n");
-
-		if (valid_input == 1)
-			message_to_send = send_message_client("PLAYER_MOVE", user_input_string, NULL);
-	}
+	char* message_to_send=NULL;
+	printf("Choose your guess:\n");
+	scanf("%s", user_input_string);
+	message_to_send = send_message_client("PLAYER_MOVE", user_input_string, NULL);
 	return message_to_send;
 }
 
@@ -134,6 +93,7 @@ char* handle_recieved_message_client(MessSplit* rcvdMess, char* serv_ip, char* s
 				valid_input = 1;
 				exit_flag = 1;
 				reconnect = 0;
+				
 				break;
 			default:
 				printf("Invalid input.\nPlease type again your input and make sure it is valid!\n");
@@ -152,12 +112,22 @@ char* handle_recieved_message_client(MessSplit* rcvdMess, char* serv_ip, char* s
 	{
 		message_to_send = move_player_choice();
 	}
+	else if (strcmp(rcvdMess->type, "SERVER_WIN") == 0)
+	{
+		printf("%s won!\nopponents number was %s\n", rcvdMess->parameters[0], rcvdMess->parameters[1]);
+		
+	}
+	else if (strcmp(rcvdMess->type, "SERVER_DRAW") == 0)
+	{
+		printf("it's a tie\n");
+
+	}
 	else if (strcmp(rcvdMess->type, "SERVER_GAME_RESULTS") == 0)
 	{
-		printf("You played: %s\n", rcvdMess->parameters[2]);
-		printf("%s played: %s\n", rcvdMess->parameters[0], rcvdMess->parameters[1]); //server plays - serve is in par[1]
-		if (strcmp(rcvdMess->parameters[3], "") != 0)
-			printf("%s won!\n", rcvdMess->parameters[3]);
+		printf("Bulls: %s\n", rcvdMess->parameters[0]);
+		printf("Cows: %s\n", rcvdMess->parameters[1]); 
+		printf("%s played: %s\n", rcvdMess->parameters[2], rcvdMess->parameters[3]);
+		
 	}
 	else if (strcmp(rcvdMess->type, "SERVER_GAME_OVER_MENU") == 0)
 	{
@@ -182,9 +152,9 @@ char* handle_recieved_message_client(MessSplit* rcvdMess, char* serv_ip, char* s
 	}
 	else if (strcmp(rcvdMess->type, "SERVER_OPPONENT_QUIT") == 0)
 	{
-		printf("%s has left the game!\n", rcvdMess->parameters[0]);
+		printf("Opponent has left the game!\n");
 	}
-	else if (strcmp(rcvdMess->type, "SERVER_NO_OPPONENT") == 0)
+	else if (strcmp(rcvdMess->type, "SERVER_NO_OPPONENTS") == 0)
 	{
 		printf("Currently there're no availeable players for a game!\n");
 	}
@@ -192,6 +162,7 @@ char* handle_recieved_message_client(MessSplit* rcvdMess, char* serv_ip, char* s
 	{
 		printf("Invalid message type!\nMessage is not sent based on the known protocol");
 		printf("Exiting...\n");
+		printf("message type %s\n", rcvdMess->type);
 		strcpy(message_to_send, "malloc"); //this enables us to exit the program
 	}
 	free(user_input_char);
@@ -266,7 +237,7 @@ int Connection_Loss(char* serv_ip, int serv_port, char* username, SOCKET clientS
 description – supports recieving message + timeout handling for two usecases - waiting for opponent - 30 sec, all the rest - 15.
 inputs - server ip and port, client socket
 returns: 0 if failed,1 if disconnected, 2 if succeed, 3 for controled exit and 4 for malloc error*/
-TransferResult_t ReceiveString(char** OutputStrPtr, SOCKET sd, MessThreadInput* param)
+TransferResult_t ReceiveStringForClient(char** OutputStrPtr, SOCKET sd, MessThreadInput* param)
 {
 	/* Recv the the request to the server on socket sd */
 	TransferResult_t RecvRes;
@@ -453,7 +424,7 @@ static DWORD SendRecvThread(LPVOID lpParam)
 	while (!done)
 	{
 		char* AcceptedStr = NULL;
-		RecvRes = ReceiveString(&AcceptedStr, client_socket, thread_param);
+		RecvRes = ReceiveStringForClient(&AcceptedStr, client_socket, thread_param);
 		if (RecvRes == TRNS_FAILED)
 		{
 			printf("socket error while trying to write data to socket\n");
@@ -619,7 +590,12 @@ int Connection_try(char* serv_ip, int serv_port, char* username, SOCKET clientSo
 	}
 	return 0;
 }
+DWORD WINAPI SendWithThread(LPVOID lpParam)
+{
+	MessThreadInput* thread_param = (MessThreadInput*)lpParam; //casting
+	SendRecvThread(lpParam);
 
+}
 
 int main(int argc, char* argv[])
 {
@@ -700,7 +676,7 @@ int main(int argc, char* argv[])
 			break;
 		}
 		else {
-			hThread = CreateThreadSimple(SendRecvThread, &p_thread, (char*)mess_thread);
+			hThread = CreateThreadSimple(SendWithThread, &p_thread, (char*)mess_thread);
 			Res = WaitForSingleObject(hThread, INFINITE);
 			if ((mess_thread->error == 0) || (mess_thread->error == 1)) {
 				retval = 1;
@@ -726,3 +702,4 @@ int main(int argc, char* argv[])
 	}
 	return retval;
 }
+

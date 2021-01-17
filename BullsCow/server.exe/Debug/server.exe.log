@@ -1,85 +1,45 @@
-﻿  Messages.c
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(127,20): warning C4018: '<': signed/unsigned mismatch
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(128,39): warning C4047: '==': 'int' differs in levels of indirection from 'char [2]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(128,73): warning C4047: '==': 'int' differs in levels of indirection from 'char [2]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(158,56): warning C4133: 'function': incompatible types - from 'rsize_t *' to 'const char *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(158,62): warning C4047: 'function': 'char **' differs in levels of indirection from 'char [2]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(158,58): warning C4024: 'strtok_s': different types for formal and actual parameter 3
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(158,64): warning C4020: 'strtok_s': too many actual parameters
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(159,55): warning C4133: 'function': incompatible types - from 'rsize_t *' to 'const char *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(159,60): warning C4047: 'function': 'char **' differs in levels of indirection from 'char [2]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(159,57): warning C4024: 'strtok_s': different types for formal and actual parameter 3
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(159,62): warning C4020: 'strtok_s': too many actual parameters
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(162,35): warning C4133: 'function': incompatible types - from 'rsize_t *' to 'const char *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(162,40): warning C4047: 'function': 'char **' differs in levels of indirection from 'char [2]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(162,37): warning C4024: 'strtok_s': different types for formal and actual parameter 3
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Shared Files\Messages.c(162,42): warning C4020: 'strtok_s': too many actual parameters
-  main.c
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\main.c(16,10): warning C4101: 'SocketForClient': unreferenced local variable
-  SocketFunctions.c
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(25,27): warning C4018: '<': signed/unsigned mismatch
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(31,38): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(38,30): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(42,23): warning C4018: '<': signed/unsigned mismatch
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(48,34): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(67,34): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(73,30): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(85,30): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(111,13): warning C4133: 'function': incompatible types - from 'int *' to 'const char *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(246,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(246,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(290,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(290,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(324,112): warning C4047: 'function': 'char **' differs in levels of indirection from 'char (*)[5]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(324,70): warning C4024: 'ReadNumbersFromFile': different types for formal and actual parameter 4
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(336,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(336,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(444,102): warning C4047: 'function': 'char **' differs in levels of indirection from 'char (*)[5]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(444,70): warning C4024: 'ReadNumbersFromFile': different types for formal and actual parameter 4
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(446,124): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(446,88): warning C4024: 'CalculateScore': different types for formal and actual parameter 8
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(446,163): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(446,127): warning C4024: 'CalculateScore': different types for formal and actual parameter 9
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(454,118): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(454,82): warning C4024: 'MakeGameWinString': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(459,118): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(459,82): warning C4024: 'MakeGameWinString': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(474,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(474,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(411,11): warning C4101: 'OtherGuess': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(520,35): warning C4047: '=': 'bool *' differs in levels of indirection from 'int'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(525,27): warning C4047: '=': 'bool *' differs in levels of indirection from 'int'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(497,11): warning C4101: 'wait_res_mutex': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(498,10): warning C4101: 'release_res': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(551,55): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(551,19): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(583,55): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(583,19): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(590,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(590,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(634,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(634,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(654,76): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(654,61): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(695,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(695,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(696,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(696,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(697,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(697,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(720,95): warning C4047: '=': 'char *' differs in levels of indirection from 'char (*)[5]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(721,95): warning C4047: '=': 'char *' differs in levels of indirection from 'char (*)[20]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(743,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(743,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(744,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(744,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(745,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(745,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
-  Generating Code...
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(144): warning C4715: 'CreateSocketBindItAndListen': not all control paths return a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(163): warning C4715: 'AcceptConnection': not all control paths return a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(375): warning C4172: returning address of local variable or temporary: GameResult
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(369): warning C4172: returning address of local variable or temporary: GameResult
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(648): warning C4716: 'HandleClient': must return a value
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(655): warning C4716: 'DenieClient': must return a value
+﻿  SocketFunctions.c
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(29,27): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(35,38): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(42,30): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(46,23): warning C4018: '<': signed/unsigned mismatch
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(52,34): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(80,27): warning C4013: 'FileExists' undefined; assuming extern returning int
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(91,30): warning C4098: 'CheckThreadsStatus': 'void' function returning a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(119,13): warning C4133: 'function': incompatible types - from 'int *' to 'const char *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(251,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(251,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(300,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(300,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(307,63): warning C4047: 'function': 'const char *' differs in levels of indirection from 'int'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(307,53): warning C4024: 'strcpy_s': different types for formal and actual parameter 3
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(437,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(437,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(719,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(719,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(597,11): warning C4101: 'OtherGuess': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(754,11): warning C4101: 'wait_res_mutex': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(755,10): warning C4101: 'release_res': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(935,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(935,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(983,80): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(983,65): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1008,76): warning C4047: 'function': 'HANDLE **' differs in levels of indirection from 'HANDLE *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1008,61): warning C4022: 'CheckThreadsStatus': pointer mismatch for actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1069,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1069,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1070,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1070,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1071,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1071,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1139,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1139,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1140,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1140,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1141,44): warning C4047: 'function': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1141,40): warning C4024: 'HeapFree': different types for formal and actual parameter 2
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1031,1): warning C4047: 'initializing': 'char' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(152): warning C4715: 'CreateSocketBindItAndListen': not all control paths return a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(997): warning C4716: 'HandleClient': must return a value
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\SocketFunctions.c(1009): warning C4716: 'DenieClient': must return a value
   server.exe.vcxproj -> D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\Debug\Server.exe

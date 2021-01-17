@@ -26,12 +26,14 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
+
 typedef struct MyData {
     int ThreadNumber;
-    char NumberThatIChose[MAXIMUM_GUESS_LENGHT];
-    char NumberThatOtherChose[MAXIMUM_GUESS_LENGHT];
-    char MyGuess[MAXIMUM_GUESS_LENGHT];
-    char OtherGuess[MAXIMUM_GUESS_LENGHT];
+   // char NumberThatIChose[MAXIMUM_GUESS_LENGHT];
+    char* NumberThatIChose;
+    char* NumberThatOtherChose;
+    char* MyGuess;
+    char* OtherGuess;
     char ClientName[MAXIMUM_NAME_LENGHT];
     char OpponentName[MAXIMUM_NAME_LENGHT];
     HANDLE FileWriteMutex;
@@ -40,11 +42,23 @@ typedef struct MyData {
     SOCKET ServerSocket;
     int* NumberOfPlayersThatWantToPlay;
     int* NumberOfConnectedPlayers;
-    bool* PlayerOneFinishedWriting;
-    bool* PlayerTwoFinishedWriting;
+    bool* PlayerOneFinishedWritingInSetup;
+    bool* PlayerTwoFinishedWritingInSetup;
+    bool* PlayerOneFinishedReadingInSetup;
+    bool* PlayerTwoFinishedReadingInSetup;
+    bool* PlayerOneFinishedWritingInPlay;
+    bool* PlayerTwoFinishedWritingInPlay;
+    bool* PlayerOneFinishedReadingInPlay;
+    bool* PlayerTwoFinishedReadingInPlay;
+    bool* PlayerOneFileInUse;
+    bool* PlayerTwoFileInUse;
     bool InUse;
+    bool* PlayerOneIsStillConnected;
+    bool* PlayerTwoIsStillConnected;
     char* PlayerOneName;
     char* PlayerTwoName;
+    int PlayerNumber;
+    bool ConnectOnlyForDenied;
 } MYDATA, * PMYDATA;
 
 

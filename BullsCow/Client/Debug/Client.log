@@ -1,46 +1,21 @@
-﻿  client_sendrecievefuncs.c
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_sendrecievefuncs.c(143,12): warning C4552: '!=': result of expression not used
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_sendrecievefuncs.c(139,3): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_sendrecievefuncs.c(142,3): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_sendrecievefuncs.c(145,4): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_sendrecievefuncs.c(148,3): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_sendrecievefuncs.c(188,13): error C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_sendrecievefuncs.c(202,18): error C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  client_threadfuncs.c
-  client_main.c
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(50,25): warning C4013: 'len' undefined; assuming extern returning int
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(50,49): warning C4047: '==': 'char [20]' differs in levels of indirection from 'int'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(50,79): warning C4047: 'function': 'int' differs in levels of indirection from 'char [20]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(50,62): warning C4024: 'isdigit': different types for formal and actual parameter 1
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(23,1): warning C4047: 'initializing': 'char' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(29,3): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(32,10): warning C4101: 'temp': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(74,34): warning C4047: '==': 'char [20]' differs in levels of indirection from 'int'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(74,64): warning C4047: 'function': 'int' differs in levels of indirection from 'char [20]'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(74,47): warning C4024: 'isdigit': different types for formal and actual parameter 1
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(67,1): warning C4047: 'initializing': 'char' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(73,3): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(123,10): warning C4477: 'scanf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(95,1): warning C4047: 'initializing': 'char' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(103,3): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(123,4): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(167,4): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(195,3): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(243,9): warning C4477: 'scanf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(243,3): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(270,1): warning C4029: declared formal parameter list different from definition
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(285,45): warning C4133: '=': incompatible types - from 'timeval *' to 'timeval *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(293,26): warning C4047: 'function': 'int' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(293,22): warning C4024: 'select': different types for formal and actual parameter 1
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(390,3): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(398,3): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(513,143): warning C4133: 'function': incompatible types - from 'MessThreadInput *' to 'sendThreadInput *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(433,32): warning C4101: 'TransmissionRes': unreferenced local variable
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(584,10): warning C4477: 'scanf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(570,34): error C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(584,4): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(703,32): warning C4013: 'CreateThreadSimple' undefined; assuming extern returning int
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(703,79): warning C4047: '=': 'HANDLE' differs in levels of indirection from 'int'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(631,1): warning C4047: 'initializing': 'DWORD' differs in levels of indirection from 'void *'
-D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(634,14): warning C4101: 'clientService': unreferenced local variable
-  Generating Code...
+﻿  client_main.c
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\deff_main.h(10,1): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c : message : see previous definition of '_CRT_SECURE_NO_WARNINGS'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\deff_main.h(12,1): warning C4005: '_WINSOCK_DEPRECATED_NO_WARNINGS': macro redefinition
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c : message : see previous definition of '_WINSOCK_DEPRECATED_NO_WARNINGS'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(24,1): warning C4047: 'initializing': 'char' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(84,10): warning C4477: 'scanf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(54,1): warning C4047: 'initializing': 'char' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(217,9): warning C4477: 'scanf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(259,45): warning C4133: '=': incompatible types - from 'timeval *' to 'timeval *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(267,26): warning C4047: 'function': 'int' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(267,22): warning C4024: 'select': different types for formal and actual parameter 1
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(487,143): warning C4133: 'function': incompatible types - from 'MessThreadInput *' to 'sendThreadInput *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(407,32): warning C4101: 'TransmissionRes': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(558,10): warning C4477: 'scanf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(682,32): warning C4013: 'CreateThreadSimple' undefined; assuming extern returning int
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(682,79): warning C4047: '=': 'HANDLE' differs in levels of indirection from 'int'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(610,1): warning C4047: 'initializing': 'DWORD' differs in levels of indirection from 'void *'
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(613,14): warning C4101: 'clientService': unreferenced local variable
+D:\GitStuff\Operating_Systems_Ex2\BullsCow\Client\client_main.c(601): warning C4716: 'SendWithThread': must return a value
+  Client.vcxproj -> D:\GitStuff\Operating_Systems_Ex2\BullsCow\server.exe\Debug\Client.exe

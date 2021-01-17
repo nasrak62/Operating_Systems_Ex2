@@ -19,7 +19,16 @@
 #define ERROR_GET_EXIT_CODE 3
 #define ERROR_EXIT_CODE_1 4
 #define ERROR_CLOSING_HANDEL 5
+
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#pragma comment(lib, "Ws2_32.lib")
 
 SOCKET client_socket;
 
@@ -88,4 +97,5 @@ MessSplit* create_mess_struct();
 char* create_message_to_send(char* type, char** parameters, int num);
 int param_type(char* Type);
 int MessageRecv(char* message, MessSplit* MessageStruct);
-
+//static DWORD SendRecvThread(LPVOID lpParam);
+//DWORD WINAPI SendWithThread(LPVOID lpParam);

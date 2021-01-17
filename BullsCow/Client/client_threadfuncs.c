@@ -48,3 +48,5 @@ HANDLE CreateThreadSimple(LPTHREAD_START_ROUTINE p_start_routine,
 		p_thread_id);    /*  returns the thread identifier */
 }
 
+
+
